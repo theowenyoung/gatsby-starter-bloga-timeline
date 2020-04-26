@@ -1,0 +1,9 @@
+[build]
+  publish = "public"
+  command = "yarn build"
+[build.environment]
+  YARN_FLAGS = "--no-ignore-optional"
+[[plugins]]
+package = "netlify-plugin-gatsby-cache"
+[[plugins]]
+package = "netlify-plugin-debug-cache"

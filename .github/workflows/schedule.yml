@@ -1,0 +1,12 @@
+name: Scheduled Build Trigger
+on:
+  schedule:
+  - cron: '*/20 * * * *'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Trigger build webhook
+      run: curl -s -X POST "${DEPLOY_HOOK}"
+      env:
+        DEPLOY_HOOK: ${{ secrets.DEPLOY_HOOK }}

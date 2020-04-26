@@ -1,0 +1,27 @@
+html {
+  font-family: 'Lora', -apple-system,BlinkMacSystemFont,'Helvetica Neue', 'Segoe UI',Roboto,Arial,'PingFang TC','Microsoft YaHei', 'Source Han Sans TC','Noto Sans CJK TC','WenQuanYi Micro Hei',sans-serif;
+}  
+
+* {
+  box-sizing: border-box;
+}
+/* pre,code {
+  white-space: pre-wrap;
+  word-spacing: normal;
+  word-break: break-word;
+} */
+pre{
+  overflow: auto;
+  position: relative;
+  margin: 0.5em 0;
+  padding: 1.25em 1em;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+code{
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+}

@@ -1,0 +1,18 @@
+blockquote.twitter-tweet{
+  margin:0;
+  outline:0;
+  font-size:1.1rem;
+  vertical-align:baseline;
+  background:transparent;
+  quotes:none;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 1.25rem;
+
+}
+
+blockquote.twitter-tweet:before, blockquote.twitter-tweet:after {
+  content:'';
+  content:none;
+}
+
