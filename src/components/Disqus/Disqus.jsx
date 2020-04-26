@@ -1,50 +1,47 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import ReactDisqusComments from "react-disqus-comments";
 import urljoin from "url-join";
-import config from "../../../data/SiteConfig";
-
-class Disqus extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      toasts: []
-    };
-    this.notifyAboutComment = this.notifyAboutComment.bind(this);
-    this.onSnackbarDismiss = this.onSnackbarDismiss.bind(this);
+import { useStaticQuery, graphql } from "gatsby";
+export default function Disqus({
+  postNode
+}) {
+  const data = useStaticQuery(query)
+  const config = data.site.siteMetadata;
+  const [toasts, setToasts] = useState([])
+  if (!config.disqusShortname) {
+    return null;
   }
-
-  onSnackbarDismiss() {
-    const [, ...toasts] = this.state.toasts;
-    this.setState({ toasts });
+  const post = postNode.frontmatter;
+  const { slug } = postNode.fields
+  const url = urljoin(
+    config.siteUrl,
+    config.pathPrefix,
+    postNode.fields.slug
+  );
+  const notifyAboutComment = () => {
+    const newToasts = toasts.slice();
+    newToasts.push({ text: "New comment available!" });
+    setToasts(newToasts);
   }
-
-  notifyAboutComment() {
-    const toasts = this.state.toasts.slice();
-    toasts.push({ text: "New comment available!" });
-    this.setState({ toasts });
-  }
-
-  render() {
-    const { postNode } = this.props;
-    if (!config.disqusShortname) {
-      return null;
-    }
-    const post = postNode.frontmatter;
-    const url = urljoin(
-      config.siteUrl,
-      config.pathPrefix,
-      postNode.fields.slug
-    );
-    return (
-      <ReactDisqusComments
-        shortname={config.disqusShortname}
-        identifier={post.title}
-        title={post.title}
-        url={url}
-        onNewComment={this.notifyAboutComment}
-      />
-    );
-  }
+  return (
+    <ReactDisqusComments
+      shortname={config.disqusShortname}
+      identifier={slug}
+      title={post.title}
+      url={url}
+      onNewComment={notifyAboutComment}
+    />
+  );
 }
 
-export default Disqus;
+const query = graphql`
+  query DisqusQuery {
+    site {
+      siteMetadata {
+        siteUrl
+        pathPrefix
+        disqusShortname
+      }
+    }
+  }
+`;

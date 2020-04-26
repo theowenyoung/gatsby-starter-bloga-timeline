@@ -2,25 +2,30 @@ import React from "react";
 import Helmet from "react-helmet";
 import Layout from "../components/Layout/Layout";
 import SEO from "../components/SEO/SEO";
-import config from "../../data/SiteConfig";
+import { graphql } from "gatsby";
 
-class Landing extends React.Component {
-  render() {
-    const postEdges = this.props.data.allMarkdownRemark.edges;
-    return (
-      <Layout>
-        <div className="landing-container">
-          <div className="posts-container">
-            <Helmet title={config.siteTitle} />
-            <SEO />
-            <h2>Coming soon.</h2>
-          </div>
+export default function Landing({ data }) {
+  const config = data.site.siteMetadata;
+  return (
+    <Layout>
+      <div className="landing-container">
+        <div className="posts-container">
+          <Helmet title={config.siteTitle} />
+          <SEO />
+          <h2>Coming soon.</h2>
         </div>
-      </Layout>
-    );
-  }
+      </div>
+    </Layout>
+  );
+
 }
 
-export default Landing;
-
-
+export const query = graphql`
+  query LandingQuery {
+    site {
+      siteMetadata {
+        siteTitle
+      }
+    }
+  }
+`

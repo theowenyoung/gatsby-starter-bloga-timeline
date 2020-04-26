@@ -6,9 +6,10 @@ import "normalize.css";
 import './global.css'
 import './dark.css'
 import styled from "@emotion/styled"
-import config from "../../../data/SiteConfig";
 import Header from "../Header/Header"
 import Footer from "../Footer/Footer"
+import { useStaticQuery, graphql } from "gatsby";
+
 const RootContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -33,22 +34,34 @@ flex-direction: column;
   max-width: 100vw;
 }
 `;
-export default class MainLayout extends React.Component {
-  render() {
-    const { children, isShowHeader } = this.props;
-    return (
-      <RootContainer id="root-container">
-        <Helmet>
-          <meta name="description" content={config.siteDescription} />
-          <html lang="en" />
-        </Helmet>
-        <RootContainerWrapper>
-          {isShowHeader === false ? null : (<Header ></Header>)}
-          {children}
-          <Footer />
-        </RootContainerWrapper>
-      </RootContainer>
 
-    );
-  }
+export default function MainLayout({ children, isShowHeader }) {
+  const queryResult = useStaticQuery(query)
+  const config = queryResult.site.siteMetadata;
+  return (
+    <RootContainer id="root-container">
+      <Helmet>
+        <meta name="description" content={config.siteDescription} />
+        <html lang="en" />
+      </Helmet>
+      <RootContainerWrapper>
+        {isShowHeader === false ? null : (<Header ></Header>)}
+        {children}
+        <Footer />
+      </RootContainerWrapper>
+    </RootContainer>
+
+  );
 }
+
+
+
+const query = graphql`
+  query LayoutQuery {
+    site {
+      siteMetadata {
+        siteDescription
+      }
+    }
+  }
+`;
