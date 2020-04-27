@@ -4,7 +4,7 @@ require("dotenv").config({
 const urljoin = require("url-join");
 const path = require("path");
 const GitUrlParse = require("git-url-parse");
-
+const _ = require('lodash')
 const low = require('lowdb')
 const buildConfig = require('./data/build-config')
 const config = require("./data/site-config");
@@ -78,23 +78,14 @@ sources.forEach((source, index) => {
   }
 })
 
-
+const cloneConfig = _.cloneDeep(config);
+delete cloneConfig.sources;
 module.exports = {
   pathPrefix: config.pathPrefix === "" ? "/" : config.pathPrefix,
   siteMetadata: {
-    ...config,
+    ...cloneConfig,
     siteUrl: urljoin(config.siteUrl, config.pathPrefix),
-    rssMetadata: {
-      site_url: urljoin(config.siteUrl, config.pathPrefix),
-      feed_url: urljoin(config.siteUrl, config.pathPrefix, config.siteRss),
-      title: config.siteTitle,
-      description: config.siteDescription,
-      image_url: `${urljoin(
-        config.siteUrl,
-        config.pathPrefix
-      )}/logos/logo.png`,
-      copyright: config.copyright
-    }
+
   },
   plugins: plugins.concat([
     `gatsby-plugin-emotion`,
@@ -113,6 +104,19 @@ module.exports = {
         name: "posts",
         path: `${__dirname}/content/`
       }
+    },
+    {
+      resolve: `gatsby-plugin-remote-images`,
+      options: {
+        nodeType: 'Site',
+        imagePath: 'siteMetadata.siteLogo',
+        name: 'siteLogo2',
+        prepareUrl: url => {
+          console.log('url', url);
+
+          return (url.startsWith('//') ? `https:${url}` : url)
+        },
+      },
     },
     {
       resolve: "gatsby-transformer-remark",
@@ -205,7 +209,15 @@ module.exports = {
       resolve: "@theowenyoung/gatsby-plugin-feed",
       options: {
         setup(ref) {
-          const ret = ref.query.site.siteMetadata.rssMetadata;
+          const siteMetadata = ref.query.site.siteMetadata;
+          const ret = {
+            site_url: siteMetadata.siteUrl,
+            feed_url: urljoin(siteMetadata.siteUrl, siteMetadata.siteRss),
+            title: siteMetadata.siteTitle,
+            description: siteMetadata.siteDescription,
+            image_url: siteMetadata.siteLogo,
+            copyright: siteMetadata.copyright
+          }
           ret.allMarkdownRemark = ref.query.allMarkdownRemark;
           ret.generator = "@theowenyoung/gatsby-plugin-feed";
           return ret;
@@ -214,14 +226,12 @@ module.exports = {
         {
           site {
             siteMetadata {
-              rssMetadata {
-                site_url
-                feed_url
-                title
-                description
-                image_url
-                copyright
-              }
+              siteUrl
+              siteTitle
+              siteLogo
+              copyright
+              siteDescription
+              siteRss
             }
           }
         }
@@ -238,14 +248,7 @@ module.exports = {
               query ListingQuery {
                 site {
                   siteMetadata {
-                    rssMetadata {
-                      site_url
-                      feed_url
-                      title
-                      description
-                      image_url
-                      copyright
-                    }
+                    siteUrl
                   }
                 }
                 allTimeline(
@@ -351,7 +354,7 @@ module.exports = {
               }
 
 
-              const rssMetadata = allTimelineResult.site.siteMetadata.rssMetadata;
+              const siteMetadata = allTimelineResult.site.siteMetadata;
 
               const items = allTimelineResult.allTimeline.edges.map(({ node: {
                 date,
@@ -370,8 +373,8 @@ module.exports = {
                     categories = node.frontmatter.tags;
                     title = node.frontmatter.title || node.excerpt.substring(0, 50);
                     description = node.excerpt;
-                    url = rssMetadata.site_url + slug
-                    guid = rssMetadata.site_url + slug;
+                    url = siteMetadata.siteUrl + slug
+                    guid = siteMetadata.siteUrl + slug;
                     custom_elements = [
                       { "content:encoded": node.html },
                       { author: config.userEmail }

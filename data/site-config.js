@@ -2,6 +2,7 @@ const yaml = require('js-yaml');
 const fs = require('fs');
 const path = require('path')
 const { getTemplateValue } = require('../utils/string')
+const _ = require('lodash')
 // Get document, or throw exception on error
 let defaultConfig, userConfig;
 try {
@@ -38,12 +39,12 @@ if (config.siteRss && config.siteRss[0] !== "/")
   config.siteRss = `/${config.siteRss}`;
 
 // parse the final value
-const iterate = (obj, ...parentKeys) => {
+const iterate = (obj, keyPath) => {
   Object.keys(obj).forEach(key => {
     let value = obj[key]
     if (typeof value === 'object' && value !== null) {
-      if (parentKeys) {
-        iterate(obj[key], ...parentKeys, key)
+      if (keyPath) {
+        iterate(obj[key], `${keyPath}[${key}]`)
       } else {
         iterate(obj[key], key)
 
@@ -60,32 +61,8 @@ const iterate = (obj, ...parentKeys) => {
           },
           config: config
         })
-        if (parentKeys && parentKeys.length > 0) {
-          const keysLength = parentKeys.length;
-          if (keysLength === 8) {
-            config[parentKeys[0]][parentKeys[1]][parentKeys[2]][parentKeys[3]][parentKeys[4]][parentKeys[5]][parentKeys[6]][parentKeys[7]][key] = newValue
-          }
-          else if (keysLength === 7) {
-            config[parentKeys[0]][parentKeys[1]][parentKeys[2]][parentKeys[3]][parentKeys[4]][parentKeys[5]][parentKeys[6]][key] = newValue
-          }
-          else if (keysLength === 6) {
-            config[parentKeys[0]][parentKeys[1]][parentKeys[2]][parentKeys[3]][parentKeys[4]][parentKeys[5]][key] = newValue
-          }
-          else if (keysLength === 5) {
-            config[parentKeys[0]][parentKeys[1]][parentKeys[2]][parentKeys[3]][parentKeys[4]][key] = newValue
-          }
-          else if (keysLength === 4) {
-            config[parentKeys[0]][parentKeys[1]][parentKeys[2]][parentKeys[3]][key] = newValue
-          }
-          else if (keysLength === 3) {
-            config[parentKeys[0]][parentKeys[1]][parentKeys[2]][key] = newValue
-          } else if (keysLength === 2) {
-            config[parentKeys[0]][parentKeys[1]][key] = newValue
-
-          } else if (keysLength === 1) {
-            config[parentKeys[0]][key] = newValue
-          }
-
+        if (keyPath) {
+          _.set(config, `${keyPath}[${key}]`, newValue)
         } else {
           config[key] = newValue
         }
@@ -94,6 +71,7 @@ const iterate = (obj, ...parentKeys) => {
     }
   })
 }
-iterate(config)
+iterate(config);
+console.log('config', config);
 
 module.exports = config;
