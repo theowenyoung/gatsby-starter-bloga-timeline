@@ -2,9 +2,10 @@ import React from "react";
 import Helmet from "react-helmet";
 import Layout from "../components/Layout/Layout";
 import SEO from "../components/SEO/SEO";
-import { graphql } from "gatsby";
+import { graphql, useStaticQuery } from "gatsby";
 
-export default function Landing({ data }) {
+export default function Landing() {
+  const data = useStaticQuery(query)
   const config = data.site.siteMetadata;
   return (
     <Layout>
@@ -20,7 +21,7 @@ export default function Landing({ data }) {
 
 }
 
-export const query = graphql`
+const query = graphql`
   query LandingQuery {
     site {
       siteMetadata {

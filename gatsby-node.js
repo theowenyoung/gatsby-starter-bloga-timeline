@@ -6,10 +6,10 @@ const moment = require("moment");
 const twitterEmbed = require('./utils/transformers/tweet')
 const instagramEmbed = require('./utils/transformers/instagram')
 
-const siteConfig = require("./data/SiteConfig");
+const siteConfig = require("./data/site-config");
 const { getFileLastCommitDate } = require('./utils/date')
 const { getTags } = require('./utils/string')
-const buildConfig = require('./data/BuildConfig');
+const buildConfig = require('./data/build-config');
 const fse = require('fs-extra')
 const low = require('lowdb')
 const FileSync = require('lowdb/adapters/FileSync')
@@ -17,14 +17,9 @@ const adapter = new FileSync(buildConfig.cacheDbPath)
 const db = low(adapter)
 db.defaults({})
   .write();
-const defaultOwner = 'default-site-plugin'
 exports.sourceNodes = async ({
   getNodes,
   graphql,
-  actions: {
-    touchNode
-  },
-  ...rest
 }) => {
   console.log('source node');
 }
@@ -48,7 +43,6 @@ exports.createResolvers = async function ({
         children: [],
         parent: node.id,
         internal: {
-          // owner: defaultOwner,
           type: "Timeline",
           contentDigest: createContentDigest(`timeline-${node.id}`)
         },
@@ -75,7 +69,6 @@ exports.createResolvers = async function ({
               children: [],
               parent: node.id,
               internal: {
-                // owner: defaultOwner,
                 type: "TagTimeline",
                 contentDigest: createContentDigest(`tag-timeline-${tag}-${node.id}`)
               },
@@ -106,7 +99,6 @@ exports.createResolvers = async function ({
               children: [],
               parent: node.id,
               internal: {
-                // owner: defaultOwner,
                 type: "TagTimeline",
                 contentDigest: createContentDigest(`tag-timeline-${tag}-${node.id}`)
               },
@@ -138,7 +130,6 @@ exports.createResolvers = async function ({
               children: [],
               parent: node.id,
               internal: {
-                // owner: defaultOwner,
                 type: "TagTimeline",
                 contentDigest: createContentDigest(`tag-timeline-${tag}-${node.id}`)
               },
@@ -181,7 +172,6 @@ exports.createResolvers = async function ({
       parent: null,
       postCount: totalCount,
       internal: {
-        // owner: defaultOwner,
         type: "Tag",
         contentDigest: createContentDigest(`tag-${key}`)
       },

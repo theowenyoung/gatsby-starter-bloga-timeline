@@ -107,7 +107,7 @@ const query = graphql`
         userDescription
       }
     }
-    avatar: file(absolutePath: { regex: "/logo\\-1024.*(jpeg|jpg|gif|png)/" }) {
+    avatar: file(absolutePath: { regex: "/logo.*(jpeg|jpg|gif|png)/" }) {
       childImageSharp {
         fixed(width: 48, height: 48) {
           base64

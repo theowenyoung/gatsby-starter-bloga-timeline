@@ -3,25 +3,82 @@ require("dotenv").config({
 })
 const urljoin = require("url-join");
 const path = require("path");
+const GitUrlParse = require("git-url-parse");
+
 const low = require('lowdb')
-const buildConfig = require('./data/BuildConfig')
+const buildConfig = require('./data/build-config')
+const config = require("./data/site-config");
 const FileSync = require('lowdb/adapters/FileSync')
 const adapter = new FileSync(buildConfig.cacheDbPath)
 const db = low(adapter);
 db.defaults({})
   .write();
 
-
 const buildCache = db.get(buildConfig.buildCacheKey).value();
 console.log('last build:', buildCache);
 
-const config = require("./data/SiteConfig");
-const {
-  TWITTER_CONSUMER_KEY,
-  TWITTER_CONSUMER_SECRET,
-  TWITTER_BEARER_TOKEN,
-  INSTAGRAM_ACCESS_TOKEN
-} = process.env;
+let plugins = []
+
+const sources = config.sources || [];
+
+sources.forEach((source, index) => {
+  if (source.provider === 'git') {
+    const gitObj = GitUrlParse(source.remote)
+    plugins.push({
+      resolve: `@theowenyoung/gatsby-source-git`,
+      options: {
+        name: `${gitObj.name}${index}`,
+        remote: source.remote,
+        branch: source.branch,
+        // Optionally supply a branch. If none supplied, you'll get the default branch.
+        // Tailor which files get imported eg. import the docs folder from a codebase.
+        patterns: source.patterns
+      }
+    })
+  }
+  if (source.provider === 'twitter') {
+    plugins.push({
+      resolve: `@theowenyoung/gatsby-source-twitter`,
+      options: {
+        credentials: {
+          consumer_key: source.consumerKey,
+          consumer_secret: source.consumerSecret,
+          bearer_token: source.bearerToken,
+        },
+        queries: {
+          tweets: {
+            endpoint: "statuses/user_timeline",
+            maxCount: db.get(buildConfig.buildCacheKey).value() ? 200 : 3200,
+            params: {
+              screen_name: source.screenName,
+              include_rts: true,
+              count: 200,
+              exclude_replies: true,
+              tweet_mode: "extended",
+            },
+          },
+
+        },
+      },
+    })
+  }
+
+  if (source.provider === 'instagram') {
+
+    plugins.push(
+      {
+        resolve: `@theowenyoung/gatsby-source-instagram`,
+        options: {
+          access_token: source.accessToken,
+          instagram_id: source.instagramId,
+          paginate: 100,
+          maxPosts: db.get(buildConfig.buildCacheKey).value() ? 100 : 10000,
+        },
+      })
+  }
+})
+
+
 module.exports = {
   pathPrefix: config.pathPrefix === "" ? "/" : config.pathPrefix,
   siteMetadata: {
@@ -35,56 +92,11 @@ module.exports = {
       image_url: `${urljoin(
         config.siteUrl,
         config.pathPrefix
-      )}/logos/logo-512.png`,
+      )}/logos/logo.png`,
       copyright: config.copyright
     }
   },
-  plugins: [
-    {
-      resolve: `@theowenyoung/gatsby-source-git`,
-      options: {
-        name: `blog`,
-        remote: `https://github.com/theowenyoung/blog.git`,
-        branch: 'master',
-        // Optionally supply a branch. If none supplied, you'll get the default branch.
-        // Tailor which files get imported eg. import the docs folder from a codebase.
-        patterns: `content/**`
-      }
-    },
-    {
-      resolve: `@theowenyoung/gatsby-source-twitter`,
-      options: {
-        credentials: {
-          consumer_key: TWITTER_CONSUMER_KEY,
-          consumer_secret: TWITTER_CONSUMER_SECRET,
-          bearer_token: TWITTER_BEARER_TOKEN,
-        },
-        queries: {
-          tweets: {
-            endpoint: "statuses/user_timeline",
-            maxCount: db.get(buildConfig.buildCacheKey).value() ? 200 : 3200,
-            params: {
-              screen_name: "TheOwenYoung",
-              include_rts: true,
-              count: 200,
-              exclude_replies: true,
-              tweet_mode: "extended",
-            },
-          },
-
-        },
-      },
-    },
-    {
-      resolve: `@theowenyoung/gatsby-source-instagram`,
-      options: {
-        access_token: INSTAGRAM_ACCESS_TOKEN,
-        instagram_id: "17841432487737681",
-        // endpoint: "https://graph.instagram.com",
-        paginate: 100,
-        maxPosts: db.get(buildConfig.buildCacheKey).value() ? 100 : 10000,
-      },
-    },
+  plugins: plugins.concat([
     `gatsby-plugin-emotion`,
     "gatsby-plugin-react-helmet",
     "gatsby-plugin-lodash",
@@ -174,20 +186,20 @@ module.exports = {
         background_color: config.backgroundColor,
         theme_color: config.themeColor,
         display: "minimal-ui",
-        icon: "static/logos/logo-1024.png"
+        icon: "static/logos/logo.png"
       }
     },
     "gatsby-plugin-offline",
-    {
-      resolve: "gatsby-plugin-netlify-cms",
-      options: {
-        modulePath: path.resolve("src/netlifycms/index.js"), // default: undefined
-        enableIdentityWidget: true,
-        publicPath: "admin",
-        htmlTitle: "Content Manager",
-        includeRobots: false
-      }
-    },
+    // {
+    //   resolve: "gatsby-plugin-netlify-cms",
+    //   options: {
+    //     modulePath: path.resolve("src/netlifycms/index.js"), // default: undefined
+    //     enableIdentityWidget: true,
+    //     publicPath: "admin",
+    //     htmlTitle: "Content Manager",
+    //     includeRobots: false
+    //   }
+    // },
     `gatsby-plugin-netlify`,
     {
       resolve: "@theowenyoung/gatsby-plugin-feed",
@@ -405,5 +417,5 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-zeit-now',
     }
-  ]
+  ])
 };
