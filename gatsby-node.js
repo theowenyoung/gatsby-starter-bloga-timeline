@@ -394,7 +394,10 @@ exports.createPages = async ({ graphql, actions, createNodeId, createContentDige
           currentPageNum: pageNum + 1,
           alltwitterStatusesUserTimelineTweetsIds,
           allMarkdownRemarkIds,
-          allInstaNodeIds
+          allInstaNodeIds,
+          isIncludeMarkdownRemark: allMarkdownRemarkIds.length > 0,
+          isIncludeTwitterStatusesUserTimelineTweets: alltwitterStatusesUserTimelineTweetsIds.length > 0,
+          isIncludeInstaNode: allInstaNodeIds.length > 0
         }
       });
     });
@@ -514,7 +517,10 @@ exports.createPages = async ({ graphql, actions, createNodeId, createContentDige
             currentPageNum: pageNum + 1,
             allMarkdownRemarkIds,
             alltwitterStatusesUserTimelineTweetsIds,
-            allInstaNodeIds
+            allInstaNodeIds,
+            isIncludeMarkdownRemark: allMarkdownRemarkIds.length > 0,
+            isIncludeTwitterStatusesUserTimelineTweets: alltwitterStatusesUserTimelineTweetsIds.length > 0,
+            isIncludeInstaNode: allInstaNodeIds.length > 0
           }
         });
       }

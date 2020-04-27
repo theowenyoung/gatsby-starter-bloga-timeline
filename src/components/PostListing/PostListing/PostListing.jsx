@@ -20,9 +20,12 @@ export default function Postlisting(props) {
   const postEdges = props.data[props.timelineKey || 'allTimeline'].edges;
   const getEntities = (key) => {
     const entities = {};
-    props.data[key].edges.forEach(({ node }) => {
-      entities[node.id] = node
-    })
+    if (props.data[key] && props.data[key].edges) {
+      props.data[key].edges.forEach(({ node }) => {
+        entities[node.id] = node
+      })
+    }
+
     return entities
   }
   const markdownRemarkEntities = getEntities('allMarkdownRemark')
@@ -149,12 +152,49 @@ const ListContainer = styled.div`
   align-items: center;
 `
 
-const query = graphql`
+export const query = graphql`
   query PostListingQuery {
     site {
       siteMetadata {
         siteDescription
       }
+    }
+  }
+  fragment IndexPostFragment on MarkdownRemark {
+    excerpt( format: HTML, pruneLength: 500)
+    frontmatter {
+      title
+      tags
+    }
+  }
+  fragment IndexTwitterFragment on twitterStatusesUserTimelineTweets {
+    fields {
+      html
+    }
+  }
+  fragment IndexInstagramFragment on InstaNode {
+    fields {
+      html
+    }
+  }
+  fragment IndexTimelineFragment on Timeline {
+    slug
+    date
+    parent {
+      internal {
+        type
+      }
+      id
+    }
+  }
+  fragment IndexTagTimelineFragment on TagTimeline {
+    slug
+    date
+    parent {
+      internal {
+        type
+      }
+      id
     }
   }
 `;

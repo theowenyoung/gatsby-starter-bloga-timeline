@@ -20,59 +20,41 @@ export default Listing;
 
 /* eslint no-undef: "off" */
 export const TagListingQuery = graphql`
-  query TagListingQuery($tag: String!, $skip: Int!, $limit: Int!, $allMarkdownRemarkIds: [String!], $alltwitterStatusesUserTimelineTweetsIds: [String!], $allInstaNodeIds: [String!]) {
-    allTagTimeline(
-      sort: { fields: date, order: DESC }
-      limit: $limit
-      skip: $skip
-      filter: {tag: {eq: $tag}}
-    ) {
-      edges {
-        node {
-          slug
-          date
-          parent {
-            internal {
-              type
-            }
-            id
-          }
-        }
-      }
-    }
-    allMarkdownRemark(filter: {id: {in: $allMarkdownRemarkIds}}) {
-      edges {
-        node {
-          id
-          excerpt( format: HTML, pruneLength: 500)
-          frontmatter {
-            title
-            tags
-          }
-        }
-      }
-    }
-    allTwitterStatusesUserTimelineTweets(filter: {id: {in: $alltwitterStatusesUserTimelineTweetsIds}}) {
-      edges {
-        node {
-          id
-          fields {
-            html
-          }
-        }
-      }
-    }
-    allInstaNode(filter: {id: {in: $allInstaNodeIds}}) {
-      edges {
-        node {
-          id
-          fields {
-            html
-          }
-        }
+query TagListingQuery($tag: String!, $skip: Int!, $limit: Int!, $isIncludeMarkdownRemark: Boolean!, $isIncludeTwitterStatusesUserTimelineTweets: Boolean!, $isIncludeInstaNode: Boolean!, $allMarkdownRemarkIds: [String!], $alltwitterStatusesUserTimelineTweetsIds: [String!], $allInstaNodeIds: [String!]) {
+  allTagTimeline(sort: {fields: date, order: DESC}, limit: $limit, skip: $skip, filter: {tag: {eq: $tag}}) {
+    edges {
+      node {
+        id
+        ...IndexTagTimelineFragment
       }
     }
   }
+  allMarkdownRemark(filter: {id: {in: $allMarkdownRemarkIds}}) @include(if: $isIncludeMarkdownRemark) {
+    edges {
+      node {
+        id
+        ...IndexPostFragment
+      }
+    }
+  }
+  allTwitterStatusesUserTimelineTweets(filter: {id: {in: $alltwitterStatusesUserTimelineTweetsIds}}) @include(if: $isIncludeTwitterStatusesUserTimelineTweets) {
+    edges {
+      node {
+        id
+        ...IndexTwitterFragment
+      }
+    }
+  }
+  allInstaNode(filter: {id: {in: $allInstaNodeIds}}) @include(if: $isIncludeInstaNode) {
+    edges {
+      node {
+        id
+        ...IndexInstagramFragment
+      }
+    }
+  }
+}
+
 `;
 
 
