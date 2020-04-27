@@ -14,7 +14,7 @@ export default function Listing(props) {
 
 /* eslint no-undef: "off" */
 export const listingQuery = graphql`
-query ListingQuery($skip: Int!, $limit: Int!, $isIncludeMarkdownRemark: Boolean!, $isIncludeTwitterStatusesUserTimelineTweets: Boolean!, $isIncludeInstaNode: Boolean!, $allMarkdownRemarkIds: [String!], $alltwitterStatusesUserTimelineTweetsIds: [String!], $allInstaNodeIds: [String!]) {
+query ListingQuery($skip: Int!, $limit: Int!, $isIncludeMarkdownRemark: Boolean!, $isIncludeTwitterStatusesUserTimelineTweets: Boolean!, $isIncludeInstaNode: Boolean!, $allMarkdownRemarkIds: [String!], $allTwitterStatusesUserTimelineTweetsIds: [String!], $allInstaNodeIds: [String!]) {
   allTimeline(sort: {fields: date, order: DESC}, limit: $limit, skip: $skip) {
     edges {
       node {
@@ -31,7 +31,7 @@ query ListingQuery($skip: Int!, $limit: Int!, $isIncludeMarkdownRemark: Boolean!
       }
     }
   }
-  allTwitterStatusesUserTimelineTweets(filter: {id: {in: $alltwitterStatusesUserTimelineTweetsIds}}) @include(if: $isIncludeTwitterStatusesUserTimelineTweets) {
+  allTwitterStatusesUserTimelineTweets(filter: {id: {in: $allTwitterStatusesUserTimelineTweetsIds}}) @include(if: $isIncludeTwitterStatusesUserTimelineTweets) {
     edges {
       node {
         id

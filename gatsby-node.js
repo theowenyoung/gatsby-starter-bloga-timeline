@@ -365,7 +365,7 @@ exports.createPages = async ({ graphql, actions, createNodeId, createContentDige
     [...Array(pageCount)].forEach((_val, pageNum) => {
       // calculate allMarkdownRemarkIds for page to get the markdownremark datas
       let allMarkdownRemarkIds = [];
-      let alltwitterStatusesUserTimelineTweetsIds = [];
+      let allTwitterStatusesUserTimelineTweetsIds = [];
       let allInstaNodeIds = [];
       [...Array(postsPerPage)].forEach((_val, postIndex) => {
         let index = pageNum * postsPerPage + postIndex;
@@ -374,7 +374,7 @@ exports.createPages = async ({ graphql, actions, createNodeId, createContentDige
             allMarkdownRemarkIds.push(postsEdges[index].node.parent.id)
           }
           if (postsEdges[index].node.parent.internal.type === 'twitterStatusesUserTimelineTweets') {
-            alltwitterStatusesUserTimelineTweetsIds.push(postsEdges[index].node.parent.id)
+            allTwitterStatusesUserTimelineTweetsIds.push(postsEdges[index].node.parent.id)
           }
           if (postsEdges[index].node.parent.internal.type === 'InstaNode') {
             allInstaNodeIds.push(postsEdges[index].node.parent.id)
@@ -382,7 +382,6 @@ exports.createPages = async ({ graphql, actions, createNodeId, createContentDige
         }
       })
       let pagePrefix = `/`
-
       createPage({
         path: pageNum === 0 ? `/` : `/pages/${pageNum + 1}/`,
         component: listingPage,
@@ -392,11 +391,11 @@ exports.createPages = async ({ graphql, actions, createNodeId, createContentDige
           pageCount,
           pagePrefix,
           currentPageNum: pageNum + 1,
-          alltwitterStatusesUserTimelineTweetsIds,
+          allTwitterStatusesUserTimelineTweetsIds,
           allMarkdownRemarkIds,
           allInstaNodeIds,
           isIncludeMarkdownRemark: allMarkdownRemarkIds.length > 0,
-          isIncludeTwitterStatusesUserTimelineTweets: alltwitterStatusesUserTimelineTweetsIds.length > 0,
+          isIncludeTwitterStatusesUserTimelineTweets: allTwitterStatusesUserTimelineTweetsIds.length > 0,
           isIncludeInstaNode: allInstaNodeIds.length > 0
         }
       });
@@ -486,7 +485,7 @@ exports.createPages = async ({ graphql, actions, createNodeId, createContentDige
         let _val = pageNum + 1;
         // calculate allMarkdownRemarkIds for page to get the markdownremark datas
         let allMarkdownRemarkIds = [];
-        let alltwitterStatusesUserTimelineTweetsIds = [];
+        let allTwitterStatusesUserTimelineTweetsIds = [];
         let allInstaNodeIds = [];
         [...Array(postsPerPage)].forEach((_val, postIndex) => {
           let index = pageNum * postsPerPage + postIndex;
@@ -495,7 +494,7 @@ exports.createPages = async ({ graphql, actions, createNodeId, createContentDige
               allMarkdownRemarkIds.push(tagPostsEdges[index].node.parent.id)
             }
             if (tagPostsEdges[index].node.parent.internal.type === 'twitterStatusesUserTimelineTweets') {
-              alltwitterStatusesUserTimelineTweetsIds.push(tagPostsEdges[index].node.parent.id)
+              allTwitterStatusesUserTimelineTweetsIds.push(tagPostsEdges[index].node.parent.id)
             }
             if (tagPostsEdges[index].node.parent.internal.type === 'InstaNode') {
               allInstaNodeIds.push(tagPostsEdges[index].node.parent.id)
@@ -516,10 +515,10 @@ exports.createPages = async ({ graphql, actions, createNodeId, createContentDige
             pagePrefix,
             currentPageNum: pageNum + 1,
             allMarkdownRemarkIds,
-            alltwitterStatusesUserTimelineTweetsIds,
+            allTwitterStatusesUserTimelineTweetsIds,
             allInstaNodeIds,
             isIncludeMarkdownRemark: allMarkdownRemarkIds.length > 0,
-            isIncludeTwitterStatusesUserTimelineTweets: alltwitterStatusesUserTimelineTweetsIds.length > 0,
+            isIncludeTwitterStatusesUserTimelineTweets: allTwitterStatusesUserTimelineTweetsIds.length > 0,
             isIncludeInstaNode: allInstaNodeIds.length > 0
           }
         });
@@ -553,6 +552,33 @@ exports.createSchemaCustomization = ({ actions }) => {
       date: Date @dateformat
       slug: String!
       tag: String!
+    }
+    type Fields {
+      html: String
+      slug: String
+      date: Date @dateformat
+    }
+    type TwitterUser {
+      screen_name: String
+    }
+    type twitterStatusesUserTimelineTweets implements Node {
+      fields: Fields
+      id_str: String
+      full_text: String
+      user: TwitterUser
+    }
+    type InstaNode implements Node {
+      fields: Fields
+      caption: String
+    }
+    type Frontmatter {
+      title: String
+      tags: [String!]
+      cover: String
+    }
+    type MarkdownRemark implements Node {
+      fields: Fields
+      frontmatter: Frontmatter
     }
   `
   createTypes(typeDefs)

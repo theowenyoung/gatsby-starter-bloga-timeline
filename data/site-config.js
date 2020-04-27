@@ -43,7 +43,6 @@ const iterate = (obj, ...parentKeys) => {
       }
     } else {
       // simple value
-      // console.log(`key: ${key}, value: ${value}`)
       if (typeof value === 'string') {
         // convert to template value
         const newValue = getTemplateValue(value, {

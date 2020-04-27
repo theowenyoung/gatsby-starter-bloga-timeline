@@ -299,7 +299,7 @@ module.exports = {
                     }
                   }
                 }
-                allTwitterStatusesUserTimelineTweets(filter: {id: {in: ${JSON.stringify(allTweetIds)}}}) {
+                allTwitterStatusesUserTimelineTweets(filter: {id: {in: ${JSON.stringify(allTweetIds)}}}) @include(if: ${JSON.stringify(allTweetIds.length > 0)}) {
                   edges {
                     node {
                       id
@@ -314,7 +314,7 @@ module.exports = {
                     }
                   }
                 }
-                allInstaNode(filter: {id: {in: ${JSON.stringify(allInstagramIds)}}}) {
+                allInstaNode(filter: {id: {in: ${JSON.stringify(allInstagramIds)}}}) @include(if: ${JSON.stringify(allInstagramIds.length > 0)}) {
                   edges {
                     node {
                       id
@@ -334,17 +334,23 @@ module.exports = {
               const markdownRemarkEntities = {};
               const tweetEntities = {};
               const instagramEntities = {}
-              console.log('entitiesResults.allInstaNode', entitiesResults.allInstaNode);
+              if (entitiesResults.allMarkdownRemark) {
+                entitiesResults.allMarkdownRemark.edges.forEach(({ node }) => {
+                  markdownRemarkEntities[node.id] = node;
+                });
+              }
+              if (entitiesResults.allTwitterStatusesUserTimelineTweets) {
+                entitiesResults.allTwitterStatusesUserTimelineTweets.edges.forEach(({ node }) => {
+                  tweetEntities[node.id] = node;
+                })
+              }
+              if (entitiesResults.allInstaNode) {
+                entitiesResults.allInstaNode.edges.forEach(({ node }) => {
+                  instagramEntities[node.id] = node;
+                })
+              }
 
-              entitiesResults.allMarkdownRemark.edges.forEach(({ node }) => {
-                markdownRemarkEntities[node.id] = node;
-              });
-              entitiesResults.allTwitterStatusesUserTimelineTweets.edges.forEach(({ node }) => {
-                tweetEntities[node.id] = node;
-              })
-              entitiesResults.allInstaNode.edges.forEach(({ node }) => {
-                instagramEntities[node.id] = node;
-              })
+
               const rssMetadata = allTimelineResult.site.siteMetadata.rssMetadata;
 
               const items = allTimelineResult.allTimeline.edges.map(({ node: {

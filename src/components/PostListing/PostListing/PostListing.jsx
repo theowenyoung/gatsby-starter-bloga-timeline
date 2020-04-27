@@ -167,12 +167,12 @@ export const query = graphql`
       tags
     }
   }
-  fragment IndexTwitterFragment on twitterStatusesUserTimelineTweets {
+  fragment IndexInstagramFragment on InstaNode {
     fields {
       html
     }
   }
-  fragment IndexInstagramFragment on InstaNode {
+  fragment IndexTwitterFragment on twitterStatusesUserTimelineTweets {
     fields {
       html
     }
