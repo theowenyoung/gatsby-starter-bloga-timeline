@@ -110,12 +110,7 @@ module.exports = {
       options: {
         nodeType: 'Site',
         imagePath: 'siteMetadata.siteLogo',
-        name: 'siteLogo2',
-        prepareUrl: url => {
-          console.log('url', url);
-
-          return (url.startsWith('//') ? `https:${url}` : url)
-        },
+        name: "localSiteLogo"
       },
     },
     {
