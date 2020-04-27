@@ -8,6 +8,7 @@ import SocialLinks from "../components/SocialLinks/SocialLinks";
 import SEO from "../components/SEO/SEO";
 import Bio from '../components/Bio/Bio'
 import ContentContainer from '../components/Layout/Content'
+import moment from "moment";
 
 export default class PostTemplate extends React.Component {
   render() {
@@ -31,7 +32,7 @@ export default class PostTemplate extends React.Component {
         <SEO postPath={slug} postNode={postNode} postSEO />
         <div>
           <h1>{post.title}</h1>
-          <Bio descption={date} />
+          <Bio descption={moment(date).format(config.dateFormat)} />
           <ContentContainer>
             <div dangerouslySetInnerHTML={{ __html: postNode.html }} />
           </ContentContainer>
@@ -52,6 +53,7 @@ export const pageQuery = graphql`
     site {
       siteMetadata {
         siteTitle
+        dateFormat
       }
     }
     markdownRemark(fields: { slug: { eq: $slug } }) {
@@ -66,8 +68,7 @@ export const pageQuery = graphql`
       }
       fields {
         slug
-        date(formatString:"MMM Do, YYYY")
-        dateISO: date
+        date
       }
     }
   }

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "gatsby";
+import { Link, useStaticQuery, graphql } from "gatsby";
 import styled from '@emotion/styled'
 import Flex from '../Layout/Flex'
 const FooterContainer = styled.footer`
@@ -12,27 +12,32 @@ const FooterContainer = styled.footer`
   text-decoration: underline;
  }
 `
-class Footer extends Component {
-  render() {
-    return (
-      <FooterContainer>
-        <Flex styles="justify-content:center">
-          <div>
-            &copy; Copyright {new Date().getFullYear()} <Link to="/">Owen Young</Link> ,
+export default function Footer() {
+  const data = useStaticQuery(query);
+  const config = data.site.siteMetadata;
+  return (
+    <FooterContainer>
+      <Flex styles="justify-content:center">
+        <div>
+          {config.copyright} ,
             Built with <a href="https://www.gatsbyjs.org/">
-              Gatsby
-            </a>,
-            Based on{" "}
-            <a href="https://github.com/Vagr9K/gatsby-advanced-starter">
-              Gatsby Advanced Starter
+            Gatsby
             </a>
             .
           </div>
-        </Flex>
+      </Flex>
 
-      </FooterContainer>
-    );
-  }
+    </FooterContainer>
+  );
+
 }
 
-export default Footer;
+const query = graphql`
+  query FooterQuery {
+    site {
+      siteMetadata {
+        copyright
+      }
+    }
+  }
+`;

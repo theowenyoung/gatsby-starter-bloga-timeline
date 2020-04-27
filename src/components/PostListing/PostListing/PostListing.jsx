@@ -61,6 +61,7 @@ export default function Postlisting(props) {
                       title: item.frontmatter.title,
                       excerpt: item.excerpt,
                       tags: item.frontmatter.tags,
+                      dateFormat: config.dateFormat
                     }
                     return (<Post {...params} key={slug} ></Post>)
                   }
@@ -157,6 +158,7 @@ export const query = graphql`
     site {
       siteMetadata {
         siteDescription
+        dateFormat
       }
     }
   }

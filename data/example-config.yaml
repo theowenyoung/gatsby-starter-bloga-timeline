@@ -1,0 +1,40 @@
+siteTitle: Bloga
+siteTitleShort: Bloga
+siteTitleAlt: 'Generate your blog from git, twitter, instagram and more'
+siteLogo: /logos/logo.png
+siteUrl: 'https://blog.owenyoung.com'
+pathPrefix: /
+siteDescription: 'All Owen Young''s blog, tweets and more in one place.'
+siteRss: /rss.xml
+siteRssTitle: Owen Young's Blog
+siteFBAppID: '1867376560066167'
+googleAnalyticsID: UA-164063423-1
+disqusShortname: owen-youngs-blog
+dateFromFormat: YYYY-MM-DD
+dateFormat: DD/MM/YYYY
+postsPerPage: 4
+userName: Owen Young
+# userEmail: theowenyoung@gmail.com
+userTwitter: TheOwenYoung
+# userInstagram: iamowenyoung
+# userGithub: theowenyoung
+userLocation: 'North Pole, Earth'
+userAvatar: 'https://api.adorable.io/avatars/150/test.png'
+userDescription: 自由职业者/完美主义/自动化工作流爱好者/相信普世价值
+copyright: "copyright" # Copyright string for the footer of the website and RSS feed.
+themeColor: "#c62828" # Used for setting manifest and progress theme colors.
+backgroundColor: "#e0e0e0" # Used for setting manifest background color.
+test: true
+sources:
+  - provider: twitter
+    consumerKey: ${{ env.TWITTER_CONSUMER_KEY }}
+    consumerSecret: ${{ env.TWITTER_CONSUMER_SECRET }}
+    bearerToken: ${{ env.TWITTER_BEARER_TOKEN }}
+    screenName: ${{ env.TWITTER_SCREEN_NAME}}
+  - provider: instagram
+    accessToken: ${{ env.INSTAGRAM_ACCESS_TOKEN }}
+    instagramId: ${{env.INSTAGRAM_ID}}
+  - provider: git
+    remote: https://github.com/theowenyoung/blog.git
+    branch: master
+    patterns: content/**

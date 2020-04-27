@@ -415,13 +415,14 @@ module.exports = {
 
             },
             output: config.siteRss,
-            title: config.siteRssTitle
+            title: config.siteTitle
           }
         ]
       }
     },
     {
       resolve: 'gatsby-plugin-zeit-now',
-    }
+    },
+    'gatsby-plugin-robots-txt'
   ])
 };

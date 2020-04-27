@@ -3,14 +3,21 @@ const fs = require('fs');
 const path = require('path')
 const { getTemplateValue } = require('../utils/string')
 // Get document, or throw exception on error
+let defaultConfig, userConfig;
 try {
-  var defaultConfig = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, './default-site-config.yaml'), 'utf8'));
+  defaultConfig = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, './default-site-config.yaml'), 'utf8'));
 } catch (e) {
   console.error('load default yaml error', e);
 }
+
+try {
+  userConfig = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, '../bloga.yaml'), 'utf8'));
+} catch (e) {
+  console.log('There is no user config, use default config');
+}
 const config = Object.assign({
 
-}, defaultConfig)
+}, defaultConfig, userConfig)
 
 // Validate
 
@@ -45,10 +52,15 @@ const iterate = (obj, ...parentKeys) => {
       // simple value
       if (typeof value === 'string') {
         // convert to template value
+
         const newValue = getTemplateValue(value, {
-          env: process.env
+          env: process.env,
+          date: {
+            year: new Date().getFullYear(),
+          },
+          config: config
         })
-        if (parentKeys) {
+        if (parentKeys && parentKeys.length > 0) {
           const keysLength = parentKeys.length;
           if (keysLength === 8) {
             config[parentKeys[0]][parentKeys[1]][parentKeys[2]][parentKeys[3]][parentKeys[4]][parentKeys[5]][parentKeys[6]][parentKeys[7]][key] = newValue
@@ -75,7 +87,7 @@ const iterate = (obj, ...parentKeys) => {
           }
 
         } else {
-          obj[key] = newValue
+          config[key] = newValue
         }
 
       }

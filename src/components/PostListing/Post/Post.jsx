@@ -65,6 +65,7 @@ const Post = ({
   excerpt,
   tags,
   date,
+  dateFormat,
   ...rest
 
 }) => {
@@ -95,7 +96,7 @@ const Post = ({
           </Tags>) : null}
           <Footer>
             <PublishDate>
-              <Link to={slug}>{moment(date).format("MMM Do, YYYY")}</Link>
+              <Link to={slug}>{moment(date).format(dateFormat)}</Link>
             </PublishDate>
           </Footer>
         </Content>

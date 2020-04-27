@@ -14,7 +14,8 @@ export default function () {
     site: {
       siteMetadata: {
         userTwitter,
-        userInstagram
+        userInstagram,
+        userGithub
       }
     }
   } = data;
@@ -22,18 +23,21 @@ export default function () {
     <Container styles="margin-bottom:0.6rem;">
       <RSS></RSS>
     </Container>
-    <Container styles="margin-bottom:0.6rem;">
+    {userInstagram && (<Container styles="margin-bottom:0.6rem;">
       <Instagram username={userInstagram}></Instagram>
-    </Container>
-    <Container styles="margin-bottom:0.6rem;">
+    </Container>)}
+
+    {userTwitter && (<Container styles="margin-bottom:0.6rem;">
       <Follow
         username={userTwitter}
         options={{ size: "large", count: "none" }}
       />
-    </Container>
-    <Container styles="margin-bottom:0.6rem;">
-      <GitHubButton data-size="large" href="https://github.com/theowenyoung">Follow @theowenyoung</GitHubButton>
-    </Container>
+    </Container>)}
+
+    {userGithub && (<Container styles="margin-bottom:0.6rem;">
+      <GitHubButton data-size="large" href={`https://github.com/${userGithub}`}>Follow @{userGithub}</GitHubButton>
+    </Container>)}
+
   </Frame>)
 }
 
@@ -43,6 +47,7 @@ const query = graphql`
       siteMetadata {
         userTwitter
         userInstagram
+        userGithub
       }
     }
   }

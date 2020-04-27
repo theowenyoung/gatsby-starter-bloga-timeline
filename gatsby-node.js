@@ -580,6 +580,13 @@ exports.createSchemaCustomization = ({ actions }) => {
       fields: Fields
       frontmatter: Frontmatter
     }
+    type SiteSiteMetadata implements Node {
+      userGithub: String
+      userTwitter: String
+      userInstagram: String
+      userEmail: String
+      disqusShortname: String
+    }
   `
   createTypes(typeDefs)
 }

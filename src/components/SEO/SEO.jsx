@@ -43,7 +43,7 @@ export default function SEO({ postNode, postPath, postSEO }) {
     if (!postNode.fields) return null;
 
     if (!postNode.fields.date) return null;
-    return moment(postNode.fields.dateISO).toDate();
+    return moment(postNode.fields.date).toDate();
   };
 
   image = getImagePath(image);
