@@ -72,6 +72,5 @@ const iterate = (obj, keyPath) => {
   })
 }
 iterate(config);
-console.log('config', config);
 
 module.exports = config;

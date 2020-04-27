@@ -25,16 +25,17 @@ const Bio = ({ descption }) => {
   const data = useStaticQuery(bioQuery);
   const {
     site: {
+      localSiteLogo,
       siteMetadata: { userName }
     },
-    avatar
+
   } = data;
 
   return (
     <AuthurContainer>
-      {avatar ? (
+      {localSiteLogo ? (
         (<Link to="/"><Image
-          fixed={avatar.childImageSharp.fixed}
+          fixed={localSiteLogo.childImageSharp.fixed}
           alt={userName}
           css={css`
           margin-right: 1rem;
@@ -59,19 +60,19 @@ const Bio = ({ descption }) => {
 const bioQuery = graphql`
   query BioQuery {
     site {
+      localSiteLogo {
+        childImageSharp {
+          fixed(width: 48, height: 48) {
+            base64
+            width
+            height
+            src
+            srcSet
+          }
+        }        
+      }
       siteMetadata {
         userName
-      }
-    }
-    avatar: file(absolutePath: { regex: "/logo.*(jpeg|jpg|gif|png)/" }) {
-      childImageSharp {
-        fixed(width: 48, height: 48) {
-          base64
-          width
-          height
-          src
-          srcSet
-        }
       }
     }
   }

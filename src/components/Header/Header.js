@@ -58,22 +58,23 @@ const Title = ({ children }) => {
 export default ({ children }) => {
   const data = useStaticQuery(query);
   const {
-    avatar,
     site: {
+      localSiteLogo,
       siteMetadata: {
         siteTitle,
         userName,
       }
     }
+
   } = data
 
   return (
     <HeaderContainer>
       <Container>
         <Flex>
-          {avatar ? (
+          {localSiteLogo ? (
             (<Link to="/"><Image
-              fixed={avatar.childImageSharp.fixed}
+              fixed={localSiteLogo.childImageSharp.fixed}
               alt={userName}
               css={css`
           margin-right: 1rem;
@@ -101,21 +102,21 @@ export default ({ children }) => {
 const query = graphql`
   query Query {
     site {
+      localSiteLogo {
+        childImageSharp {
+          fixed(width: 48, height: 48) {
+            base64
+            width
+            height
+            src
+            srcSet
+          }
+        }        
+      }
       siteMetadata {
         userName
         siteTitle
         userDescription
-      }
-    }
-    avatar: file(absolutePath: { regex: "/logo.*(jpeg|jpg|gif|png)/" }) {
-      childImageSharp {
-        fixed(width: 48, height: 48) {
-          base64
-          width
-          height
-          src
-          srcSet
-        }
       }
     }
   }

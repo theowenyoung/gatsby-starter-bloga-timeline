@@ -2,7 +2,7 @@ siteTitle: Bloga
 siteTitleShort: Bloga
 siteTitleAlt: Generate your blog from git, twitter, instagram and more
 siteDescription: Generate your blog from git, twitter, instagram and more
-siteLogo: /logos/logo.png
+siteLogo: https://raw.githubusercontent.com/theowenyoung/theowenyoung.github.io/develop/static/logos/logo.png
 siteUrl: 'https://blog.owenyoung.com'
 pathPrefix: /
 siteRss: /rss.xml
