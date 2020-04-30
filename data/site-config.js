@@ -3,22 +3,54 @@ const fs = require('fs');
 const path = require('path')
 const { getTemplateValue } = require('../utils/string')
 const _ = require('lodash')
+const requestSync = require('sync-request');
 // Get document, or throw exception on error
-let defaultConfig, userConfig;
+let defaultConfig, userRemoteConfig, userLocalConfig;
 try {
   defaultConfig = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, './default-site-config.yaml'), 'utf8'));
 } catch (e) {
   console.error('load default yaml error', e);
 }
 
+// try go get remote bloga config 
 try {
-  userConfig = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, '../bloga.yaml'), 'utf8'));
+  // TODO add api key 
+  if (process.env.BLOGA_CONFIG) {
+    const res = requestSync('GET', process.env.BLOGA_CONFIG, {
+      socketTimeout: 10000,
+      timeout: 100000,
+    });
+    const blogaConfigResult = res.getBody('utf8');
+    userRemoteConfig = yaml.safeLoad(blogaConfigResult, 'utf8');
+    console.log('detect bloga remote config');
+  }
+
 } catch (e) {
-  console.log('There is no user config, use default config');
+  console.error('There is no user config or load user config error, use default config', e);
+  process.exit()
+  throw e;
 }
+
+// try go get local bloga config 
+try {
+
+  let localBlogaConfig = path.resolve(__dirname, '../bloga.yaml');
+
+  if (fs.existsSync(localBlogaConfig)) {
+
+    userLocalConfig = yaml.safeLoad(fs.readFileSync(localBlogaConfig, 'utf8'), 'utf8');
+    console.log('detect bloga local config');
+  }
+
+} catch (e) {
+  console.error('There is no user config or load user config error, use default config', e);
+  process.exit()
+  throw e;
+}
+
 const config = Object.assign({
 
-}, defaultConfig, userConfig)
+}, defaultConfig, userRemoteConfig, userLocalConfig)
 
 // Validate
 
