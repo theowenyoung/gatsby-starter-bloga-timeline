@@ -1,0 +1,10 @@
+options:
+  sources:
+    type: source
+    options:
+      - bloga-twitter
+      - git-remote
+  siteTitle:
+    type: string
+    default: Bloga
+    
