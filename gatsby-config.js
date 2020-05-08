@@ -6,9 +6,10 @@ const path = require("path");
 const GitUrlParse = require("git-url-parse");
 const _ = require('lodash')
 const low = require('lowdb')
+const FileSync = require('lowdb/adapters/FileSync')
 const buildConfig = require('./data/build-config')
 const config = require("./data/site-config");
-const FileSync = require('lowdb/adapters/FileSync')
+
 const adapter = new FileSync(buildConfig.cacheDbPath)
 const db = low(adapter);
 db.defaults({})
@@ -17,7 +18,7 @@ db.defaults({})
 const buildCache = db.get(buildConfig.buildCacheKey).value();
 console.log('last build:', buildCache);
 
-let plugins = []
+const plugins = []
 
 const sources = config.sources || [];
 
@@ -204,7 +205,7 @@ module.exports = {
       resolve: "@theowenyoung/gatsby-plugin-feed",
       options: {
         setup(ref) {
-          const siteMetadata = ref.query.site.siteMetadata;
+          const {siteMetadata} = ref.query.site;
           const ret = {
             site_url: siteMetadata.siteUrl,
             feed_url: urljoin(siteMetadata.siteUrl, siteMetadata.siteRss),
@@ -269,9 +270,9 @@ module.exports = {
               const allTweetIds = [];
               const allInstagramIds = []
               allTimelineResult.allTimeline.edges.forEach(({ node }) => {
-                const type = node.parent.internal.type;
+                const {type} = node.parent.internal;
 
-                const id = node.parent.id;
+                const {id} = node.parent;
 
                 if (type === 'MarkdownRemark') {
                   allMarkdownRemarkIds.push(id)
@@ -349,7 +350,7 @@ module.exports = {
               }
 
 
-              const siteMetadata = allTimelineResult.site.siteMetadata;
+              const {siteMetadata} = allTimelineResult.site;
 
               const items = allTimelineResult.allTimeline.edges.map(({ node: {
                 date,
@@ -361,7 +362,7 @@ module.exports = {
                   }
                 }
               } }) => {
-                let categories = [], title, description, url, guid, custom_elements = [];
+                let categories = []; let title; let description; let url; let guid; let custom_elements = [];
                 if (type === 'MarkdownRemark' || type === 'twitterStatusesUserTimelineTweets' || type === 'InstaNode') {
                   if (type === 'MarkdownRemark') {
                     const node = markdownRemarkEntities[id];
@@ -392,7 +393,7 @@ module.exports = {
                       { author: config.userEmail }
                     ]
                   }
-                  let item = {
+                  const item = {
                     categories,
                     date,
                     title,
@@ -403,9 +404,9 @@ module.exports = {
                   };
 
                   return item;
-                } else {
+                } 
                   return false
-                }
+                
               }).filter(item => item);
               return {
                 items

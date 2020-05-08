@@ -1,11 +1,11 @@
 const yaml = require('js-yaml');
 const fs = require('fs');
 const path = require('path')
-const { getTemplateValue } = require('../utils/string')
 const _ = require('lodash')
 const requestSync = require('sync-request');
+const { getTemplateValue } = require('../utils/string')
 // Get document, or throw exception on error
-let defaultConfig, userRemoteConfig, userLocalConfig;
+let defaultConfig; let userRemoteConfig; let userLocalConfig;
 try {
   defaultConfig = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, './default-site-config.yaml'), 'utf8'));
 } catch (e) {
@@ -28,13 +28,12 @@ try {
 } catch (e) {
   console.error('There is no user config or load user config error, use default config', e);
   process.exit()
-  throw e;
 }
 
 // try go get local bloga config 
 try {
 
-  let localBlogaConfig = path.resolve(__dirname, '../bloga.yaml');
+  const localBlogaConfig = path.resolve(__dirname, '../bloga.yaml');
 
   if (fs.existsSync(localBlogaConfig)) {
 
@@ -48,9 +47,7 @@ try {
   throw e;
 }
 
-const config = Object.assign({
-
-}, defaultConfig, userRemoteConfig, userLocalConfig)
+const config = { ...defaultConfig, ...userRemoteConfig, ...userLocalConfig}
 
 // Validate
 
@@ -73,7 +70,7 @@ if (config.siteRss && config.siteRss[0] !== "/")
 // parse the final value
 const iterate = (obj, keyPath) => {
   Object.keys(obj).forEach(key => {
-    let value = obj[key]
+    const value = obj[key]
     if (typeof value === 'object' && value !== null) {
       if (keyPath) {
         iterate(obj[key], `${keyPath}[${key}]`)
@@ -91,7 +88,7 @@ const iterate = (obj, keyPath) => {
           date: {
             year: new Date().getFullYear(),
           },
-          config: config
+          config
         })
         if (keyPath) {
           _.set(config, `${keyPath}[${key}]`, newValue)

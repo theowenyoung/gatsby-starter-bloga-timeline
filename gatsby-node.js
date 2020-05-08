@@ -3,6 +3,9 @@
 const path = require("path");
 const _ = require("lodash");
 const moment = require("moment");
+const fse = require('fs-extra')
+const low = require('lowdb')
+const FileSync = require('lowdb/adapters/FileSync')
 const twitterEmbed = require('./utils/transformers/tweet')
 const instagramEmbed = require('./utils/transformers/instagram')
 
@@ -10,9 +13,7 @@ const siteConfig = require("./data/site-config");
 const { getFileLastCommitDate } = require('./utils/date')
 const { getTags } = require('./utils/string')
 const buildConfig = require('./data/build-config');
-const fse = require('fs-extra')
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync')
+
 const adapter = new FileSync(buildConfig.cacheDbPath)
 const db = low(adapter)
 db.defaults({})
@@ -38,8 +39,8 @@ exports.createResolvers = async function ({
       const { date, slug } = node.fields
       createNode({
         id: createNodeId(`timeline-${node.id}`),
-        date: date,
-        slug: slug,
+        date,
+        slug,
         children: [],
         parent: node.id,
         internal: {
@@ -53,8 +54,8 @@ exports.createResolvers = async function ({
         if (node.frontmatter && node.frontmatter.tags) {
           node.frontmatter.tags.forEach(tag => {
             const tagEntity = {
-              tag: tag,
-              date: date,
+              tag,
+              date,
             }
             if (globalTagsEntities[tag]) {
               globalTagsEntities[tag].push(tagEntity)
@@ -63,9 +64,9 @@ exports.createResolvers = async function ({
             }
             createNode({
               id: createNodeId(`tag-timeline-${tag}-${node.id}`),
-              tag: tag,
-              slug: slug,
-              date: date,
+              tag,
+              slug,
+              date,
               children: [],
               parent: node.id,
               internal: {
@@ -83,8 +84,8 @@ exports.createResolvers = async function ({
           node.fields.tags.forEach(hushTag => {
             const tag = hushTag;
             const tagEntity = {
-              tag: tag,
-              date: date,
+              tag,
+              date,
             }
             if (globalTagsEntities[tag]) {
               globalTagsEntities[tag].push(tagEntity)
@@ -93,9 +94,9 @@ exports.createResolvers = async function ({
             }
             createNode({
               id: createNodeId(`tag-timeline-${tag}-${node.id}`),
-              tag: tag,
-              slug: slug,
-              date: date,
+              tag,
+              slug,
+              date,
               children: [],
               parent: node.id,
               internal: {
@@ -114,8 +115,8 @@ exports.createResolvers = async function ({
           hashtags.forEach(hushTag => {
             const tag = hushTag;
             const tagEntity = {
-              tag: tag,
-              date: date,
+              tag,
+              date,
             }
             if (globalTagsEntities[tag]) {
               globalTagsEntities[tag].push(tagEntity)
@@ -124,9 +125,9 @@ exports.createResolvers = async function ({
             }
             createNode({
               id: createNodeId(`tag-timeline-${tag}-${node.id}`),
-              tag: tag,
-              slug: slug,
-              date: date,
+              tag,
+              slug,
+              date,
               children: [],
               parent: node.id,
               internal: {
@@ -187,7 +188,7 @@ exports.createResolvers = async function ({
 exports.onCreateNode = async ({ node, actions, getNode, createNodeId, createContentDigest, cache }) => {
 
   const { createNodeField, createNode } = actions;
-  let slug, date;
+  let slug; let date;
   if (node.internal.type === "MarkdownRemark") {
     const fileNode = getNode(node.parent);
     const parsedFilePath = path.parse(fileNode.relativePath);
@@ -355,7 +356,7 @@ exports.createPages = async ({ graphql, actions, createNodeId, createContentDige
     console.error(allTimelineResult.errors);
     throw allTimelineResult.errors;
   }
-  let postsEdges = allTimelineResult.data.allTimeline.edges;
+  const postsEdges = allTimelineResult.data.allTimeline.edges;
 
   // Paging
   const { postsPerPage } = siteConfig;
@@ -364,11 +365,11 @@ exports.createPages = async ({ graphql, actions, createNodeId, createContentDige
     const pageCount = Math.ceil(postsEdges.length / postsPerPage);
     [...Array(pageCount)].forEach((_val, pageNum) => {
       // calculate allMarkdownRemarkIds for page to get the markdownremark datas
-      let allMarkdownRemarkIds = [];
-      let allTwitterStatusesUserTimelineTweetsIds = [];
-      let allInstaNodeIds = [];
+      const allMarkdownRemarkIds = [];
+      const allTwitterStatusesUserTimelineTweetsIds = [];
+      const allInstaNodeIds = [];
       [...Array(postsPerPage)].forEach((_val, postIndex) => {
-        let index = pageNum * postsPerPage + postIndex;
+        const index = pageNum * postsPerPage + postIndex;
         if (postsEdges[index]) {
           if (postsEdges[index].node.parent.internal.type === 'MarkdownRemark') {
             allMarkdownRemarkIds.push(postsEdges[index].node.parent.id)
@@ -381,7 +382,7 @@ exports.createPages = async ({ graphql, actions, createNodeId, createContentDige
           }
         }
       })
-      let pagePrefix = `/`
+      const pagePrefix = `/`
       createPage({
         path: pageNum === 0 ? `/` : `/pages/${pageNum + 1}/`,
         component: listingPage,
@@ -462,7 +463,7 @@ exports.createPages = async ({ graphql, actions, createNodeId, createContentDige
     console.error(allTagResult.errors);
     throw allTagResult.errors;
   }
-  let tagPostsEdges = allTagResult.data.allTagTimeline.edges;
+  const tagPostsEdges = allTagResult.data.allTagTimeline.edges;
 
   const tagsEntities = {};
   tagPostsEdges.forEach((tagPostNode) => {
@@ -475,20 +476,20 @@ exports.createPages = async ({ graphql, actions, createNodeId, createContentDige
   })
   const tagKeys = Object.keys(tagsEntities)
   for (let i = 0; i < tagKeys.length; i++) {
-    let tag = tagKeys[i];
+    const tag = tagKeys[i];
     //  Create tag pages
     //  page 
     const tagPostsEdges = tagsEntities[tag];
     if (postsPerPage && tagPostsEdges.length > 0) {
       const pageCount = Math.ceil(tagPostsEdges.length / postsPerPage);
       for (let pageNum = 0; pageNum < pageCount; pageNum++) {
-        let _val = pageNum + 1;
+        const _val = pageNum + 1;
         // calculate allMarkdownRemarkIds for page to get the markdownremark datas
-        let allMarkdownRemarkIds = [];
-        let allTwitterStatusesUserTimelineTweetsIds = [];
-        let allInstaNodeIds = [];
+        const allMarkdownRemarkIds = [];
+        const allTwitterStatusesUserTimelineTweetsIds = [];
+        const allInstaNodeIds = [];
         [...Array(postsPerPage)].forEach((_val, postIndex) => {
-          let index = pageNum * postsPerPage + postIndex;
+          const index = pageNum * postsPerPage + postIndex;
           if (tagPostsEdges[index]) {
             if (tagPostsEdges[index].node.parent.internal.type === 'MarkdownRemark') {
               allMarkdownRemarkIds.push(tagPostsEdges[index].node.parent.id)
@@ -501,14 +502,14 @@ exports.createPages = async ({ graphql, actions, createNodeId, createContentDige
             }
           }
         })
-        let pagePrefix = `/tags/${_.kebabCase(tag)}/`
-        let tagPagePath = pageNum === 0 ? pagePrefix : `${pagePrefix}pages/${pageNum + 1}/`
+        const pagePrefix = `/tags/${_.kebabCase(tag)}/`
+        const tagPagePath = pageNum === 0 ? pagePrefix : `${pagePrefix}pages/${pageNum + 1}/`
         // query
         createPage({
           path: tagPagePath,
           component: tagPage,
           context: {
-            tag: tag,
+            tag,
             limit: postsPerPage,
             skip: pageNum * postsPerPage,
             pageCount,
