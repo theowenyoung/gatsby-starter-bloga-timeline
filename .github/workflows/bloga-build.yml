@@ -1,24 +1,38 @@
 on:
-  push:
-    branches:
-      - master
+  - push
+
 jobs:
-  build:
-    runs-on: ubuntu-18.04
+  deploy:
+    runs-on: ubuntu-latest
     name: Build
     steps:
       - uses: actions/checkout@v2
+      - name: Yarn cache directory
+        id: yarn-cache-dir
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Gatsby Cache Folder
+        uses: actions/cache@v2
         with:
-          fetch-depth: 1   
-      - name: Setup node
-        uses: actions/setup-node@v1
+          key: gatsby-cache-folder
+          path: .cache
+      - name: Gatsby Public Folder
+        uses: actions/cache@v2
         with:
-          node-version: 12
-      - run: yarn
-      - run: yarn build
+          key: gatsby-public-folder
+          path: public
+      - name: Yarn cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.yarn-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Yarn install
+        run: 'yarn install --pure-lockfile'
+      - name: Build app
+        run: 'yarn build'
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
-          cname: bloga-timeline.owenyoung.com
