@@ -27,8 +27,10 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
+      - name: look cache
+        run: 'ls $(yarn cache dir)'
       - name: Yarn install
-        run: 'yarn --verbose'
+        run: 'yarn'
       - name: Build app
         run: 'yarn build'
       - name: Deploy
