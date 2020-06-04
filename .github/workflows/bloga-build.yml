@@ -17,10 +17,10 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - name: look cache
         run: 'ls $(yarn cache dir)'
-      - name: look cache2
-        run: 'yarn cache list'
+      - name: clean cache
+        run: 'yarn cache clean'
       - name: Yarn install
-        run: 'yarn --offline'
+        run: 'yarn '
       - name: Build app
         run: 'yarn build'
       - name: Deploy
