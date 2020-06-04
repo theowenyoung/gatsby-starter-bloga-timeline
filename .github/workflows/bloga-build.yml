@@ -20,7 +20,7 @@ jobs:
       - name: look cache2
         run: 'yarn cache list'
       - name: Yarn install
-        run: 'yarn'
+        run: 'yarn --offline'
       - name: Build app
         run: 'yarn build'
       - name: Deploy
