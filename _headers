@@ -66,6 +66,16 @@
   Link: </component---src-templates-listing-jsx-6e5f63b8359c39fb438d.js>; rel=preload; as=script
   Link: </page-data/app-data.json>; rel=preload; as=fetch; crossorigin
   Link: </page-data/pages/2/page-data.json>; rel=preload; as=fetch; crossorigin
+/post/test
+  Link: </webpack-runtime-9411502fc0e2ff00a749.js>; rel=preload; as=script
+  Link: </framework-384262e45cd3148bbd8b.js>; rel=preload; as=script
+  Link: </app-1b12a2b1ba2b7e47c63c.js>; rel=preload; as=script
+  Link: </styles-30edcc5456cb03e820f2.js>; rel=preload; as=script
+  Link: </adfe46468d291e6cabf689f542aeab954d88baf8-812c8828942d945a3999.js>; rel=preload; as=script
+  Link: </eba62da4d70163c1664d83d7211f8d822a03daa0-05f1a4f6bfa81743faca.js>; rel=preload; as=script
+  Link: </component---src-templates-post-jsx-907304f9ef80a14931b1.js>; rel=preload; as=script
+  Link: </page-data/app-data.json>; rel=preload; as=fetch; crossorigin
+  Link: </page-data/post/test/page-data.json>; rel=preload; as=fetch; crossorigin
 /post/note是什么
   Link: </webpack-runtime-9411502fc0e2ff00a749.js>; rel=preload; as=script
   Link: </framework-384262e45cd3148bbd8b.js>; rel=preload; as=script
