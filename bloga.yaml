@@ -24,7 +24,7 @@ sources:
   # - provider: instagram
   #   accessToken: ${{ env.INSTAGRAM_ACCESS_TOKEN }}
   #   instagramId: 17841432487737681
-  - provider: git
-    remote: https://github.com/theowenyoung/blog.git
-    branch: master
-    patterns: content/**
+  # - provider: git
+  #   remote: https://github.com/theowenyoung/blog.git
+  #   branch: master
+  #   patterns: content/**
