@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://bloga-timeline.owenyoung.com/sitemap.xml
+Host: https://bloga-timeline.owenyoung.com
