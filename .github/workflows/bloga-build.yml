@@ -28,7 +28,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Yarn install
-        run: 'yarn install'
+        run: 'yarn install --force'
       - name: Build app
         run: 'yarn build'
       - name: Deploy
