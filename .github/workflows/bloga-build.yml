@@ -11,12 +11,12 @@ jobs:
         id: yarn-cache-dir
         run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: Gatsby Cache Folder
-        uses: theowenyoung/cache@v1.0.4
+        uses: theowenyoung/cache@v1.0.5
         with:
           key: gatsby-cache-folder
           path: .cache
       - name: Gatsby Public Folder
-        uses: theowenyoung/cache@v1.0.4
+        uses: theowenyoung/cache@v1.0.5
         with:
           key: gatsby-public-folder
           path: public
