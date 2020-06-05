@@ -65,7 +65,7 @@ jobs:
       - name: mkdir
         run: mkdir public/.test && cd public/.test && touch .gitkeep 
       - name: ls 
-        run: ls -l -a ./public
+        run: ls -l -a ./public && ls -l -a ./public/.github/workflows
       - uses: actions/upload-artifact@v2
         with:
           name: gatsby-latest-cache-key
