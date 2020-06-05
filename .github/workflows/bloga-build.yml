@@ -28,17 +28,15 @@ jobs:
       - name: Get gatsby-latest-cache-key content
         if: ${{ steps.get-gatsby-latest-cache-key-file.outcome == 'success' }}
         id: gatsby-latest-cache-key
-        uses: juliangruber/read-file-action@v1
-        with:
-          path: .bloga-last-build/_gatsby-latest-cache-key.txt
+        run: echo "::set-output name=key::$(cat .bloga-last-build/_gatsby-latest-cache-key.txt)"  
       - name: Get yarn cache directory
         id: yarn-cache-dir
         run: echo "::set-output name=dir::$(yarn cache dir)"
       - name: Gatsby cache directory restore
         uses: actions/cache@v2
-        if: ${{ steps.gatsby-latest-cache-key == 'success' }}
+        if: ${{ steps.gatsby-latest-cache-key.outcome == 'success' }}
         with:
-          key: ${{ runner.os }}-${{ steps.gatsby-latest-cache-key.outputs.content }}
+          key: ${{ runner.os }}-${{ steps.gatsby-latest-cache-key.outputs.key }}
           path: |
             .cache
             public
