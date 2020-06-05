@@ -22,7 +22,7 @@ jobs:
         run: pwd && ls -l -a
       - name: cat
         continue-on-error: true
-        run: ls -l .bloga-last-build
+        run: ls -l -a .bloga-last-build
       - name: Get gatsby-latest-cache-key content
         if: ${{ steps.get-gatsby-latest-cache-key-file.outcome == 'success' }}
         id: gatsby-latest-cache-key
