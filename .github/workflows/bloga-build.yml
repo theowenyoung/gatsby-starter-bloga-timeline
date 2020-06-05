@@ -51,6 +51,8 @@ jobs:
           path: |
             .cache
             public
+      - name: Transfer workflows
+        run: cp -r ./.github ./public
       - name: Save gatsby cache directory
         uses: actions/cache@v2
         with:
@@ -60,8 +62,6 @@ jobs:
             public
       - name: Save cache key to file
         run: echo gatsby-cache-directory-${{ steps.gatsby-latest-cache-hash.outputs.hash}} > public/_gatsby-latest-cache-key.txt
-      - name: Transfer workflows
-        run: cp -r ./.github ./public
       - name: mkdir
         run: mkdir .test && cd .test && touch .gitkeep 
       - name: ls 
