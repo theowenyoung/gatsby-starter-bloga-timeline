@@ -9,13 +9,13 @@ jobs:
     name: Build
     steps:
       - uses: actions/checkout@v2
-      - name: Yarn cache directory
+      - name: Get yarn cache directory
         id: yarn-cache-dir
         run: echo "::set-output name=dir::$(yarn cache dir)"
-      - name: Gatsby Cache Foldern Restore
+      - name: Gatsby cache directory restore
         uses: actions/cache@v2
         with:
-          key: gatsby-cache-folder
+          key: ${{ runner.os }}-gatsby-cache-directory
           path: |
             .cache
             public
@@ -30,20 +30,27 @@ jobs:
         run: 'yarn --pure-lockfile'
       - name: Build app
         run: yarn build
-      - name: Get gatsby cache folder hash
+      - name: Get gatsby latest cache folder hash
         id: gatsby-latest-cache-hash
         uses: theowenyoung/folder-hash@v2.0.1
         with:
           path: |
             .cache
             public
-      - name: Gatsby Cache Folder Save
+      - name: Save gatsby cache directory
         uses: actions/cache@v2
         with:
-          key: gatsby-cache-folder-${{ steps.gatsby-latest-cache-hash.outputs.hash}}
+          key: ${{ runner.os }}-gatsby-cache-directory-${{ steps.gatsby-latest-cache-hash.outputs.hash}}
           path: |
             .cache
             public
+      - name: Save cache key to file
+        run : echo ${{ runner.os }}-gatsby-cache-directory-${{ steps.gatsby-latest-cache-hash.outputs.hash}} > _gatsby-latest-cache-key.txt
+      - name: Upload cache key file to attifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: gatsby-latest-cache-key
+          path: _gatsby-latest-cache-key.txt
       - name: Transfer To Build
         uses: peaceiris/actions-gh-pages@v3
         with:
