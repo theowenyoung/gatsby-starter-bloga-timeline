@@ -40,7 +40,7 @@ jobs:
       - name: Gatsby Cache Folder Save
         uses: actions/cache@v2
         with:
-          key: gatsby-cache-folder-${{ steps.gatsby-latest-cache-hash.hash}}
+          key: gatsby-cache-folder-${{ steps.gatsby-latest-cache-hash.outputs.hash}}
           path: |
             .cache
             public
