@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-        - bloga-build
+      - bloga-build
 jobs:
   deploy:
     runs-on: ubuntu-latest
