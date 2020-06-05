@@ -19,7 +19,7 @@ jobs:
           ref: bloga-build-test
           path: .bloga-last-build
       - name: pwd2
-        run: pwd && ls -l
+        run: pwd && ls -l -a
       - name: cat
         continue-on-error: true
         run: ls -l .bloga-last-build
