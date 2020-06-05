@@ -4,7 +4,7 @@ on:
         - master
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     name: Build
     steps:
@@ -18,13 +18,6 @@ jobs:
         with:
           ref: bloga-build
           path: .bloga-last-build
-      - name: pwd2
-        run: pwd && ls -l -a
-      - name: cat
-        continue-on-error: true
-        run: ls -l -a .bloga-last-build
-      - name: cat2
-        run: cat .bloga-last-build/_gatsby-latest-cache-key.txt
       - name: Get gatsby-latest-cache-key content
         if: ${{ steps.get-gatsby-latest-cache-key-file.outcome == 'success' }}
         id: gatsby-latest-cache-key
@@ -71,8 +64,6 @@ jobs:
         with:
           name: gatsby-latest-cache-key
           path: public/_gatsby-latest-cache-key.txt
-      - name: echo cache key file
-        run: cat public/_gatsby-latest-cache-key.txt
       - name: Transfer To Build
         uses: peaceiris/actions-gh-pages@v3
         with:
