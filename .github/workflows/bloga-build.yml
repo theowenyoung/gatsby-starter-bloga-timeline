@@ -15,6 +15,8 @@ jobs:
         continue-on-error: true
         with:
           name: gatsby-latest-cache-key
+      - name: cat
+        run: cat _gatsby-latest-cache-key.txt
       - name: Get gatsby-latest-cache-key content
         if: ${{ steps.get-gatsby-latest-cache-key-file.outcome == 'success' }}
         id: gatsby-latest-cache-key
@@ -59,6 +61,8 @@ jobs:
             public
       - name: Save cache key to file
         run : echo gatsby-cache-directory-${{ steps.gatsby-latest-cache-hash.outputs.hash}} > _gatsby-latest-cache-key.txt
+      - name: echo cache key file
+        run: cat _gatsby-latest-cache-key.txt
       - name: Upload cache key file to attifact
         uses: actions/upload-artifact@v2
         with:
