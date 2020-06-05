@@ -11,20 +11,18 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: pwd2
-        run: pwd
-      - name: Get gatsby cache key from artifact
+      - name: Get gatsby cache key from last build
         id: get-gatsby-latest-cache-key-file
         uses: actions/checkout@v2
         continue-on-error: true
         with:
           ref: bloga-build-test
-          path: bloga-last-build
+          path: .bloga-last-build
       - name: pwd2
-        run: pwd
+        run: pwd && ls -l
       - name: cat
         continue-on-error: true
-        run: ls
+        run: ls -l .bloga-last-build
       - name: Get gatsby-latest-cache-key content
         if: ${{ steps.get-gatsby-latest-cache-key-file.outcome == 'success' }}
         id: gatsby-latest-cache-key
