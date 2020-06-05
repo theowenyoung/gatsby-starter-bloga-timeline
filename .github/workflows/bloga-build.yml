@@ -9,15 +9,22 @@ jobs:
     name: Build
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: pwd2
+        run: pwd
       - name: Get gatsby cache key from artifact
         id: get-gatsby-latest-cache-key-file
-        uses: actions/download-artifact@v2
+        uses: actions/checkout@v2
         continue-on-error: true
         with:
-          name: gatsby-latest-cache-key
+          ref: bloga-build-test
+          path: bloga-last-build
+      - name: pwd2
+        run: pwd
       - name: cat
         continue-on-error: true
-        run: cat _gatsby-latest-cache-key.txt
+        run: ls
       - name: Get gatsby-latest-cache-key content
         if: ${{ steps.get-gatsby-latest-cache-key-file.outcome == 'success' }}
         id: gatsby-latest-cache-key
@@ -61,14 +68,9 @@ jobs:
             .cache
             public
       - name: Save cache key to file
-        run : echo gatsby-cache-directory-${{ steps.gatsby-latest-cache-hash.outputs.hash}} > _gatsby-latest-cache-key.txt
+        run : echo gatsby-cache-directory-${{ steps.gatsby-latest-cache-hash.outputs.hash}} > public/_gatsby-latest-cache-key.txt
       - name: echo cache key file
-        run: cat _gatsby-latest-cache-key.txt
-      - name: Upload cache key file to attifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: gatsby-latest-cache-key
-          path: _gatsby-latest-cache-key.txt
+        run: cat public/_gatsby-latest-cache-key.txt
       - name: Transfer To Build
         uses: peaceiris/actions-gh-pages@v3
         with:
