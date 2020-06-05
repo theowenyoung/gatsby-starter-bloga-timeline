@@ -8,10 +8,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Deploy
-  steps:
-    - uses: actions/checkout@v2
-    - name: Deploy to gh pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy to gh pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
