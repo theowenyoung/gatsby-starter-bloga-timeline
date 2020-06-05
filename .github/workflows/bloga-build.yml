@@ -1,5 +1,7 @@
 on:
-  - push
+  - push:
+      branches:
+        - master
 
 jobs:
   deploy:
@@ -10,16 +12,13 @@ jobs:
       - name: Yarn cache directory
         id: yarn-cache-dir
         run: echo "::set-output name=dir::$(yarn cache dir)"
-      - name: Gatsby Cache Folder
-        uses: theowenyoung/cache@v1.0.5
+      - name: Gatsby Cache Foldern Restore
+        uses: actions/cache@v2
         with:
           key: gatsby-cache-folder
-          path: .cache
-      - name: Gatsby Public Folder
-        uses: theowenyoung/cache@v1.0.5
-        with:
-          key: gatsby-public-folder
-          path: public
+          path: |
+            .cache
+            public
       - name: Yarn cache
         uses: actions/cache@v2
         with:
@@ -30,10 +29,25 @@ jobs:
       - name: Yarn install
         run: 'yarn --pure-lockfile'
       - name: Build app
-        run: 'yarn build'
-      - name: Deploy
+        run: yarn build
+      - name: Get gatsby cache folder hash
+        id: gatsby-latest-cache-hash
+        uses: theowenyoung/folder-hash@v2
+        with:
+          path: |
+            .cache
+            public
+      - name: Gatsby Cache Folder Save
+        uses: actions/cache@v2
+        with:
+          key: gatsby-cache-folder-${{ steps.gatsby-latest-cache-hash.hash}}
+          path: |
+            .cache
+            public
+      - name: Transfer To Build
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
+          publish_branch: bloga-build
           cname: bloga-timeline.owenyoung.com
