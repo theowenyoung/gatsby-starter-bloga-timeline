@@ -18,6 +18,8 @@ jobs:
         with:
           ref: bloga-build-test
           path: .bloga-last-build
+      - name: git log
+        run: git log
       - name: pwd2
         run: pwd && ls -l -a
       - name: cat
