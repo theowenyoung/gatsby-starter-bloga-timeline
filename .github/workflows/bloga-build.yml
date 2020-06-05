@@ -32,7 +32,7 @@ jobs:
         run: yarn build
       - name: Get gatsby cache folder hash
         id: gatsby-latest-cache-hash
-        uses: theowenyoung/folder-hash@v2
+        uses: theowenyoung/hash-folder@v2
         with:
           path: |
             .cache
