@@ -9,6 +9,10 @@ jobs:
     name: Build
     steps:
       - uses: actions/checkout@v2
+      - name: Get gatsby cache key from artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: gatsby-latest-cache-key-test222
       - name: Get yarn cache directory
         id: yarn-cache-dir
         run: echo "::set-output name=dir::$(yarn cache dir)"
