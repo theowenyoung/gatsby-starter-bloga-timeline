@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack:///./src/pages/404.jsx"],"names":[],"mappings":"kHAAe,qBACb,OAAQ","file":"component---src-pages-404-jsx-41748a77a849dd2d0aff.js","sourcesContent":["export default function () {\n  return (<div>404</div>)\n}"],"sourceRoot":""}
