@@ -16,6 +16,7 @@ jobs:
         with:
           name: gatsby-latest-cache-key
       - name: cat
+        continue-on-error: true
         run: cat _gatsby-latest-cache-key.txt
       - name: Get gatsby-latest-cache-key content
         if: ${{ steps.get-gatsby-latest-cache-key-file.outcome == 'success' }}
