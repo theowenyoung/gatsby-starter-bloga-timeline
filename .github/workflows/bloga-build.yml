@@ -52,7 +52,7 @@ jobs:
             .cache
             public
       - name: Transfer workflows
-        run: cp -r ./.github ./public
+        run: cp -rf ./.github ./public
       - name: Save gatsby cache directory
         uses: actions/cache@v2
         with:
@@ -69,7 +69,7 @@ jobs:
           name: gatsby-latest-cache-key
           path: public/_gatsby-latest-cache-key.txt
       - name: Transfer To Build
-        uses: peaceiris/actions-gh-pages@v3
+        uses: theowenyoung/actions-gh-pages@v4.0.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
