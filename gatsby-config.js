@@ -1,6 +1,4 @@
-require("dotenv").config({
-  path: `.env.${process.env.NODE_ENV}`,
-})
+require("dotenv").config()
 const urljoin = require("url-join");
 const path = require("path");
 const GitUrlParse = require("git-url-parse");
@@ -38,29 +36,26 @@ sources.forEach((source, index) => {
     })
   }
   if (source.provider === 'twitter') {
+    const {provider,credentials,...rest} = source
+    console.log('rest',rest);
+    const twitterOptions = {
+      credentials: source.credentials,
+      queries: {
+        tweets: {
+          endpoint: "statuses/user_timeline",
+          maxCount: db.get(buildConfig.buildCacheKey).value() ? 200 : 3200,
+          params: {include_rts: true,
+            count: 200,
+            exclude_replies: true,
+            tweet_mode: "extended",...rest},
+        },
+
+      },
+    };
+    
     plugins.push({
       resolve: `@theowenyoung/gatsby-source-twitter`,
-      options: {
-        credentials: {
-          consumer_key: source.consumerKey,
-          consumer_secret: source.consumerSecret,
-          bearer_token: source.bearerToken,
-        },
-        queries: {
-          tweets: {
-            endpoint: "statuses/user_timeline",
-            maxCount: db.get(buildConfig.buildCacheKey).value() ? 200 : 3200,
-            params: {
-              screen_name: source.screenName,
-              include_rts: true,
-              count: 200,
-              exclude_replies: true,
-              tweet_mode: "extended",
-            },
-          },
-
-        },
-      },
+      options: twitterOptions
     })
   }
 

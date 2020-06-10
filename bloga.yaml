@@ -17,10 +17,11 @@ userDescription: 自由职业者/完美主义/自动化工作流爱好者/相信
 
 sources:
   # - provider: twitter
-  #   consumerKey: ${{ env.TWITTER_CONSUMER_KEY }}
-  #   consumerSecret: ${{ env.TWITTER_CONSUMER_SECRET }}
-  #   bearerToken: ${{ env.TWITTER_BEARER_TOKEN }}
-  #   screenName: TheOwenYoung
+  #   credentials:
+  #     rest_base: ${{ env.TWITTER_API_ENDPOINT }}
+  #     client_id: ${{ env.AUTH1_TWITTER_CLIENT_ID }}
+  #     client_secret: ${{ env.AUTH1_TWITTER_CLIENT_SECRET }}
+  #   user_id: ${{ env.TWITTER_USER_ID }}
   # - provider: instagram
   #   accessToken: ${{ env.INSTAGRAM_ACCESS_TOKEN }}
   #   instagramId: 17841432487737681
