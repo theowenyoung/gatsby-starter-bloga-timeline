@@ -2,7 +2,7 @@ options:
   sources:
     type: source
     options:
-      - bloga-twitter
+      - twitter
       - git-remote
   siteTitle:
     type: string
