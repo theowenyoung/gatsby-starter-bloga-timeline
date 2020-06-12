@@ -1,6 +1,9 @@
 options:
-  - type: source
-    name: Source
+  - type: options
+    multiple: true
+    option-type: source
+    name: source
+    label: Source
     options:
       - twitter
       - git-remote
