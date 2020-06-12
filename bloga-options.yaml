@@ -5,8 +5,8 @@ options:
     name: source
     label: Source
     options:
-      - twitter
-      - git-remote
+      - provider: twitter
+      - provider: git-remote
   - type: text
     default: Bloga
     name: siteTitle
