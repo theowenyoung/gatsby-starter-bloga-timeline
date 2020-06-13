@@ -1,10 +1,7 @@
+sources:
+  - provider: twitter
+  - provider: git-remote
 options:
-  - type: sources
-    name: sources
-    label: Sources
-    options:
-      - provider: twitter
-      - provider: git-remote
   - type: text
     default: Bloga
     name: siteTitle
