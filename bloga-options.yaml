@@ -1,9 +1,7 @@
 options:
-  - type: options
-    multiple: true
-    option-type: source
-    name: source
-    label: Source
+  - type: sources
+    name: sources
+    label: Sources
     options:
       - provider: twitter
       - provider: git-remote
@@ -11,4 +9,7 @@ options:
     default: Bloga
     name: siteTitle
     label: Site Title
-    
+  - type: connection
+    provider: twitter
+    name: twitter
+    label: Twitter Connection
