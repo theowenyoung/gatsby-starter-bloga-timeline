@@ -6,6 +6,10 @@ options:
     default: Bloga
     name: siteTitle
     label: Site Title
+  - type: text
+    default: https://test.com
+    name: site_url
+    label: Site URL
   - type: connection
     provider: twitter
     name: twitter
