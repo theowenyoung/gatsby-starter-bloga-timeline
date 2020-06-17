@@ -1,12 +1,12 @@
 sources:
   - provider: twitter
-  - provider: git-remote
+  - provider: git
 options:
-  - type: text
+  - type: string
     default: Bloga
     name: siteTitle
     label: Site Title
-  - type: text
+  - type: string
     default: https://test.com
     name: site_url
     label: Site URL
