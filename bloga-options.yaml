@@ -1,16 +1,25 @@
 sources:
   - provider: twitter
   - provider: git
+
 options:
+  - type: group
+    name: siteMetadata
+    label: SiteMetadata
+    options:
+      - type: string
+        default: Bloga
+        name: siteTitle
+        label: Site Title
+      - type: string
+        default: https://test.com
+        name: site_url
+        label: Site URL
+      - type: connection
+        provider: twitter
+        name: twitter
+        label: Twitter Connection
   - type: string
-    default: Bloga
-    name: siteTitle
-    label: Site Title
-  - type: string
-    default: https://test.com
-    name: site_url
-    label: Site URL
-  - type: connection
-    provider: twitter
-    name: twitter
-    label: Twitter Connection
+    default: https://test2.com
+    name: siteUrl
+    label: Site URL 2
