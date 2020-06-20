@@ -3,7 +3,7 @@ sources:
   - provider: git
 
 options:
-  - type: group
+  - type: object
     name: siteMetadata
     label: SiteMetadata
     options:
@@ -13,13 +13,12 @@ options:
         label: Site Title
       - type: string
         default: https://test.com
-        name: site_url
+        name: site_ url
         label: Site URL
-      - type: connection
-        provider: twitter
-        name: twitter
-        label: Twitter Connection
-  - type: string
-    default: https://test2.com
-    name: siteUrl
-    label: Site URL 2
+  - type: plugin-options
+    plugin: gatsby-plugin-google-analytics
+    label: Gatsby Plugin Google Analytics
+    options:
+      - type: string
+        name: trackingId
+        label: Tracking Id
