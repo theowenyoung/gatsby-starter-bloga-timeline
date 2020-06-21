@@ -5,7 +5,7 @@ sources:
 options:
   - type: object
     name: siteMetadata
-    label: SiteMetadata
+    label: Site Metadata
     options:
       - type: string
         default: Bloga
