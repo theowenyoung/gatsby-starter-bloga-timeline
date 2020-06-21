@@ -22,3 +22,17 @@ options:
       - type: string
         name: trackingId
         label: Tracking Id
+  - type: plugin-options
+    plugin: gatsby-plugin-google-analytics
+    label: Gatsby Plugin Google Analytics
+    options:
+      - type: string
+        name: trackingId
+        label: Tracking Id
+  - type: plugin-options
+    plugin: gatsby-plugin-sitemap
+    label: gatsby plugin sitemap
+    options:
+      - type: string
+        name: name
+        label: Name
