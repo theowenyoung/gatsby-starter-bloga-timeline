@@ -379,7 +379,7 @@ module.exports = {
                         categories.push(tag)
                       })
                     }
-                    title = node.full_text.substring(0, 50);
+                    title = node.full_text?node.full_text.substring(0, 50):"";
                     description = node.full_text;
                     url = `https://twitter.com/${node.user.screen_name}/status/${node.id_str}`
                     guid = url;
