@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
-Sitemap: https://bloga-timeline.owenyoung.com/sitemap.xml
-Host: https://bloga-timeline.owenyoung.com
+Sitemap: https://blog.owenyoung.com/sitemap.xml
+Host: https://blog.owenyoung.com
