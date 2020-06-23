@@ -16,12 +16,18 @@ userLocation: 'North Pole, Earth'
 userDescription: 自由职业者/完美主义/自动化工作流爱好者/相信普世价值
 
 sources:
-  # - provider: twitter
-  #   credentials:
-  #     rest_base: ${{ env.TWITTER_API_ENDPOINT }}
-  #     client_id: ${{ env.AUTH1_TWITTER_CLIENT_ID }}
-  #     client_secret: ${{ env.AUTH1_TWITTER_CLIENT_SECRET }}
-  #   user_id: ${{ env.TWITTER_USER_ID }}
+  - provider: twitter
+    credentials:
+      rest_base: ${{ env.TWITTER_API_ENDPOINT }}
+      client_id: ${{ env.AUTH1_TWITTER_CLIENT_ID }}
+      client_secret: ${{ env.AUTH1_TWITTER_CLIENT_SECRET }}
+    user_id: ${{ env.TWITTER_USER_ID }}
+  - provider: twitter
+    credentials:
+      rest_base: ${{ env.TWITTER_API_ENDPOINT2 }}
+      client_id: ${{ env.AUTH1_TWITTER_CLIENT_ID }}
+      client_secret: ${{ env.AUTH1_TWITTER_CLIENT_SECRET }}
+    user_id: ${{ env.TWITTER_USER_ID2 }}
   # - provider: instagram
   #   accessToken: ${{ env.INSTAGRAM_ACCESS_TOKEN }}
   #   instagramId: 17841432487737681

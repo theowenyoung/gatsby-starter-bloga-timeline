@@ -2,7 +2,10 @@ on:
   push:
     branches:
         - master
-
+env:
+  AUTH1_CLIENT_ID: ${{ secrets.AUTH1_CLIENT_ID }}
+  AUTH1_CLIENT_SECRET: ${{ secrets.AUTH1_CLIENT_SECRET }}
+  BLOGA_SITE_CONFIG_URL: ${{ secrets.BLOGA_SITE_CONFIG_URL }}
 jobs:
   build:
     runs-on: ubuntu-latest
