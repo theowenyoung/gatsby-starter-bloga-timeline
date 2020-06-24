@@ -2368,10 +2368,10 @@
   dependencies:
     unist-util-select "^2.0.0"
 
-"@theowenyoung/gatsby-source-git@^1.0.7":
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/@theowenyoung/gatsby-source-git/-/gatsby-source-git-1.0.7.tgz#1675c7b5e680fe821411f468d88ea22360be433d"
-  integrity sha512-+1In8q9os0z/qymtxKP7YOjyObXAZlHSUwTw+1LwpjCbUEfmyTX1a4V3LKb1qhNOCP8JeG/b1zp42+o4p9CeLQ==
+"@theowenyoung/gatsby-source-git@^1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@theowenyoung/gatsby-source-git/-/gatsby-source-git-1.0.8.tgz#c7ffe4f521ca565419044c4f6efd15905539f671"
+  integrity sha512-cjBD39+LtcUuVN62Viy2FoG59cYigkV2Xpe5TZmHeF1r8xKEFb9X78FsnQyyCEsdpfg5458WvWog/Hp+3bhTRw==
   dependencies:
     fast-glob "^2.2.3"
     fs-extra "^5.0.0"
