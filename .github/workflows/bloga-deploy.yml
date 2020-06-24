@@ -54,8 +54,6 @@ jobs:
           path: |
             .cache
             public
-      - name: Transfer workflows
-        run: cp -rf ./.github ./public
       - name: Save gatsby cache directory
         uses: actions/cache@v2
         with:
@@ -78,3 +76,5 @@ jobs:
           publish_dir: ./public
           publish_branch: gh-pages
           cname: bloga-timeline.owenyoung.com
+          user_name: "github-actions[bot]"
+          user_email: "github-actions[bot]@users.noreply.github.com"
