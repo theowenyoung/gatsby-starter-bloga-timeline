@@ -49,6 +49,10 @@ jobs:
         run: 'cat node_modules/bloga-gatsby/package.json'
       - name: bloga
         run: './node_modules/.bin/bloga-gatsby'
+      - name: yarn bloga
+        run: "yarn bloga"
+      - name: init bloga
+        run: 'yarn init-bloga'
       - name: Build app
         run: yarn build
       - name: Get gatsby latest cache folder hash

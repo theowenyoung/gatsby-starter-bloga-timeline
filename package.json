@@ -5,6 +5,7 @@
   "author": "Ruben Harutyunyan <vagr9k@gmail.com>",
   "scripts": {
     "init-bloga": "bloga-gatsby init",
+    "bloga":"bloga-gatsby",
     "develop": "bloga-gatsby init && gatsby develop --port 8009",
     "dev": "bloga-gatsby init && npm run develop",
     "start": "bloga-gatsby init && npm run develop",
