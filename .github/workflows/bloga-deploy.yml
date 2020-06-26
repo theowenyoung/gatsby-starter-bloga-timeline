@@ -47,6 +47,8 @@ jobs:
         run: 'yarn --pure-lockfile'
       - name: ls
         run: 'cat node_modules/bloga-gatsby/package.json'
+      - name: bloga
+        run: './node_modules/.bin/bloga-gatsby'
       - name: Build app
         run: yarn build
       - name: Get gatsby latest cache folder hash
