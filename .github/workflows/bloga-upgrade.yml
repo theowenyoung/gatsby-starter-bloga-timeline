@@ -1,0 +1,93 @@
+on:
+  repository_dispatch:
+    types: [upgrade]
+env:
+  TEMPLATE_REPO: theowenyoung/gatsby-starter-bloga-timeline
+  UPGRADE_BRANCH: bloga-automated-upgrade
+jobs:   
+  upgrade:
+    if: |
+      (github.repository != '${{ env.TEMPLATE_REPO}}')
+    runs-on: ubuntu-latest
+    steps:
+    
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    
+    - name: checkout latest fastpages
+      uses: actions/checkout@v2
+      with:
+        repository: ''${{ env.TEMPLATE_REPO}}'
+        path: 'new_files'
+        persist-credentials: false
+        
+    - name: copy this repo's contents
+      uses: actions/checkout@v2
+      with:
+        path: 'current_files'
+        persist-credentials: false
+
+
+    - name: copy new files
+      run: |
+        # remove files you don't want to copy from current version of fastpages
+        cd new_files        
+   
+        # copy new files from fastpages into your repo
+        for file in $(ls | egrep -v "(assets|_sass)"); do 
+          if [[ -f "$file" ]] || [[ -d "$file" ]] 
+          then
+            echo "copying $file"; 
+            cp -r $file ../current_files;
+          fi
+        done
+
+        # copy action workflows
+        cp -r .github ../current_files
+    
+
+    - uses: webfactory/ssh-agent@v0.2.0
+      with:
+          ssh-private-key: ${{ secrets.SSH_DEPLOY_KEY }}
+                        
+    - name: commit changes to branch
+      run: |
+        # commit changes
+        cd current_files
+        git config --global user.email "${GH_USERNAME}@users.noreply.github.com"
+        git config --global user.name "${GH_USERNAME}"
+        git remote remove origin
+        git remote add origin "git@github.com:${GITHUB_REPOSITORY}.git"
+
+        git checkout -b ${UPGRADE_BRANCH}
+        git add -A
+        git commit -m 'upgrade bloga'
+      env: 
+        GH_USERNAME: github-actions
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ env.UPGRADE_BRANCH}}
+        force: true
+        directory: current_files
+
+    - name: Open a PR
+      id: pr
+      uses: actions/github-script@0.6.0
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          var fs = require('fs');
+          github.pulls.create({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        title: '[bloga] Update repo with changes from template',
+                        head: '${UPGRADE_BRANCH}',
+                        base: 'master',
+                        body: `test body content`
+                        })
+                      .then(result => console.log(`::set-output name=pr_num::${result.data.number}`))
+  
