@@ -45,8 +45,6 @@ jobs:
             ${{ runner.os }}-yarn-
       - name: Yarn install
         run: 'yarn --pure-lockfile'
-      - name: ls
-        run: 'cat node_modules/bloga-gatsby/package.json'
       - name: bloga
         run: './node_modules/.bin/bloga-gatsby'
       - name: yarn bloga
@@ -71,8 +69,6 @@ jobs:
             public
       - name: Save cache key to file
         run: echo gatsby-cache-directory-${{ steps.gatsby-latest-cache-hash.outputs.hash}} > public/_gatsby-latest-cache-key.txt
-      - name: ls 
-        run: ls -l -a ./public && ls -l -a ./public/.github/workflows
       - uses: actions/upload-artifact@v2
         with:
           name: gatsby-latest-cache-key
