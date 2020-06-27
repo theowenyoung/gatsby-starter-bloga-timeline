@@ -9,6 +9,7 @@ env:
   AUTH1_CLIENT_SECRET: ${{ secrets.AUTH1_CLIENT_SECRET }}
   BLOGA_SITE_CONFIG_URL: ${{ secrets.BLOGA_SITE_CONFIG_URL }}
 jobs:
+  if: (github.event.commits[0].message != 'Initial commit') && (github.run_number > 1)
   build:
     runs-on: ubuntu-latest
     name: Build
