@@ -86,7 +86,7 @@ jobs:
                         owner: context.repo.owner,
                         repo: context.repo.repo,
                         title: '[bloga] Update repo with changes from template',
-                        head: '${UPGRADE_BRANCH}',
+                        head: process.env.UPGRADE_BRANCH,
                         base: 'master',
                         body: `test body content`
                         })
