@@ -4,10 +4,20 @@ on:
 env:
   TEMPLATE_REPO: theowenyoung/gatsby-starter-bloga-timeline
   UPGRADE_BRANCH: bloga-automated-upgrade
-jobs:   
+jobs:  
+  define:
+    runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      TEMPLATE_REPO: ${{ env.TEMPLATE_REPO }}
+      UPGRADE_BRANCH: ${{ env.UPGRADE_BRANCH }}
+    steps:
+      - run: echo "define"
   upgrade:
+    needs: define
+
     if: |
-      (github.repository != '${{ env.TEMPLATE_REPO}}')
+      (github.repository != '${{needs.define.outputs.TEMPLATE_REPO}}')
     runs-on: ubuntu-latest
     steps:
     
@@ -19,7 +29,7 @@ jobs:
     - name: checkout latest fastpages
       uses: actions/checkout@v2
       with:
-        repository: ''${{ env.TEMPLATE_REPO}}'
+        repository: '${{ env.TEMPLATE_REPO}}'
         path: 'new_files'
         persist-credentials: false
         
@@ -46,12 +56,9 @@ jobs:
 
         # copy action workflows
         cp -r .github ../current_files
-    
-
-    - uses: webfactory/ssh-agent@v0.2.0
+    - uses: webfactory/ssh-agent@v0.4.0
       with:
-          ssh-private-key: ${{ secrets.SSH_DEPLOY_KEY }}
-                        
+        ssh-private-key: ${{ secrets.SSH_DEPLOY_KEY }}
     - name: commit changes to branch
       run: |
         # commit changes
@@ -64,15 +71,9 @@ jobs:
         git checkout -b ${UPGRADE_BRANCH}
         git add -A
         git commit -m 'upgrade bloga'
+        git push -f --set-upstream origin ${UPGRADE_BRANCH}
       env: 
         GH_USERNAME: github-actions
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${{ env.UPGRADE_BRANCH}}
-        force: true
-        directory: current_files
 
     - name: Open a PR
       id: pr
