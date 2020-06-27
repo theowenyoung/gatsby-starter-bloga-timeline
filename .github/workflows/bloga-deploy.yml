@@ -2,6 +2,8 @@ on:
   push:
     branches:
         - master
+  repository_dispatch:
+    types: [redeploy]
 env:
   AUTH1_CLIENT_ID: ${{ secrets.AUTH1_CLIENT_ID }}
   AUTH1_CLIENT_SECRET: ${{ secrets.AUTH1_CLIENT_SECRET }}
