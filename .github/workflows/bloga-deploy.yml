@@ -19,6 +19,12 @@ jobs:
       - name: check param
         if: ${{ !env.SSH_DEPLOY_KEY }}
         run: exit 1
+      - name: print test
+        run: echo test
+      - name: pirnt SSH_DEPLOY_KEY
+        run: echo "xxx$SSH_DEPLOY_KEY"
+      - name: print xxx
+        run: echo "yyy$BLOGA_SITE_CONFIG_URL"
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
