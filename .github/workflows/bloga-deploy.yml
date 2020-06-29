@@ -11,7 +11,7 @@ env:
 jobs:
   
   build:
-    if: (github.event.commits[0].message != 'Initial commit') && (github.run_number > 1) && (secrets.SSH_DEPLOY_KEY)
+    if: (github.event.commits[0].message != 'Initial commit') && (github.run_number > 1) && (${{secrets.SSH_DEPLOY_KEY}})
     runs-on: ubuntu-latest
     name: Build
     steps:
