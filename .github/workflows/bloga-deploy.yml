@@ -11,7 +11,7 @@ env:
 jobs:
   
   build:
-    if: (github.event.commits[0].message != 'Initial commit') && (github.run_number > 1)
+    if: (github.event.commits[0].message != 'Initial commit') && (github.run_number > 1) && (secrets.SSH_DEPLOY_KEY)
     runs-on: ubuntu-latest
     name: Build
     steps:
@@ -80,7 +80,7 @@ jobs:
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          deploy_key: ${{ secrets.SSH_DEPLOY_KEY }}
           publish_dir: ./public
           publish_branch: gh-pages
           cname: bloga-timeline.owenyoung.com
