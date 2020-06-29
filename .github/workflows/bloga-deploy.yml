@@ -8,13 +8,17 @@ env:
   AUTH1_CLIENT_ID: ${{ secrets.AUTH1_CLIENT_ID }}
   AUTH1_CLIENT_SECRET: ${{ secrets.AUTH1_CLIENT_SECRET }}
   BLOGA_SITE_CONFIG_URL: ${{ secrets.BLOGA_SITE_CONFIG_URL }}
+  SSH_DEPLOY_KEY: ${{secrets.SSH_DEPLOY_KEY }}
 jobs:
   
   build:
-    if: (github.event.commits[0].message != 'Initial commit') && (github.run_number > 1) && (${{secrets.SSH_DEPLOY_KEY}})
+    if: (github.event.commits[0].message != 'Initial commit') && (github.run_number > 1)
     runs-on: ubuntu-latest
     name: Build
     steps:
+      - name: check param
+        if: ${{ !env.SSH_DEPLOY_KEY }}
+        run: exit 1
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
