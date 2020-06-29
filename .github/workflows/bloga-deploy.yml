@@ -30,7 +30,6 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             console.log('test111');
-            console.log(process.env.SSH_DEPLOY_KEY.split('\n').join("22222"))
             console.log(process.env.BLOGA_SITE_CONFIG_URL)
       - uses: actions/checkout@v2
         with:
