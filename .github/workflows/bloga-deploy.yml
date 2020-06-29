@@ -87,6 +87,5 @@ jobs:
           deploy_key: ${{ secrets.SSH_DEPLOY_KEY }}
           publish_dir: ./public
           publish_branch: gh-pages
-          cname: bloga-timeline.owenyoung.com
           user_name: "github-actions[bot]"
           user_email: "github-actions[bot]@users.noreply.github.com"
