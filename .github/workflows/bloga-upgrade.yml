@@ -121,6 +121,8 @@ jobs:
     - name: Open a PR
       id: pr
       uses: actions/github-script@0.6.0
+      env:
+        SOURCE_BRANCH: ${{ needs.init.outputs.sourceBranch }}
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
@@ -130,7 +132,7 @@ jobs:
                         repo: context.repo.repo,
                         title: '[bloga] Update repo with changes from template',
                         head: process.env.UPGRADE_BRANCH,
-                        base: 'master',
+                        base: process.env.SOURCE_BRANCH,
                         body: `test body content`
                         })
                       .then(result => console.log(`::set-output name=pr_num::${result.data.number}`))
