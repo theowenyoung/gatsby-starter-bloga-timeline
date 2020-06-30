@@ -65,7 +65,7 @@ jobs:
     needs: init
     runs-on: ubuntu-latest
     name: Build
-    if: ${{  needs.init.outputs.isFirstCommit=='false' && needs.init.outputs.isSourceBranch==='true' }}
+    if:  (needs.init.outputs.isFirstCommit=='false')  && (needs.init.outputs.isSourceBranch=='true')
     steps:
       - name: check param
         if: !env.SSH_DEPLOY_KEY
