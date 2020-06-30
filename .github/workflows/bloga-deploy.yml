@@ -13,9 +13,9 @@ jobs:
     outputs:
       isFirstCommit: ${{ (github.event.commits[0].message != 'Initial commit') && (github.run_number > 1) }}
       repositoryName: ${{ steps.repositoryName.outputs.result}}
-      sourceBranch: ${{ steps.sourceBranch.outputs.result}}
-      deployBranch: ${{ steps.sourceBranch.outputs.result}}
-      isSourceBranch: ${{ "refs/heads/"+steps.sourceBranch.outputs.result == github.ref}}
+      sourceBranch: ${{ steps.sourceBranch.outputs.result }}
+      deployBranch: ${{ steps.sourceBranch.outputs.result }}
+      isSourceBranch: ${{ steps.isSourceBranch.outputs.result }}
     steps:
       - run: echo init...
       - uses: jungwinter/split@v1.1.0
@@ -48,6 +48,17 @@ jobs:
               return 'gh-pages'
             }
           result-encoding: string
+      - id: isSourceBranch
+        uses: actions/github-script@v2
+        env:
+          SOURCE_BRANCH: ${{ steps.sourceBranch.outputs.result }}
+        with:
+          script: |
+            if(`refs/heads/${process.env.SOURCE_BRANCH}` === context.ref){
+              return true
+            }else{
+              return false
+            }
   
   build:
     needs: init
