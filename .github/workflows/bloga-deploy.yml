@@ -68,7 +68,7 @@ jobs:
     if:  (needs.init.outputs.isFirstCommit=='false')  && (needs.init.outputs.isSourceBranch=='true')
     steps:
       - name: check param
-        if: !env.SSH_DEPLOY_KEY
+        if: (!env.SSH_DEPLOY_KEY)
         run: exit 1
       - uses: actions/github-script@v2
         with:
