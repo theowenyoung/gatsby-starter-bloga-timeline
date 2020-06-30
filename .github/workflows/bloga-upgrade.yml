@@ -24,7 +24,7 @@ jobs:
       with:
         python-version: 3.7
     
-    - name: checkout latest fastpages
+    - name: checkout latest tempalte source 
       uses: actions/checkout@v2
       with:
         repository: '${{ env.TEMPLATE_REPO}}'
@@ -66,10 +66,10 @@ jobs:
         git remote remove origin
         git remote add origin "git@github.com:${GITHUB_REPOSITORY}.git"
 
-        git checkout -b ${UPGRADE_BRANCH}
+        git checkout -b $UPGRADE_BRANCH
         git add -A
         git commit -m 'upgrade bloga'
-        git push -f --set-upstream origin ${UPGRADE_BRANCH}
+        git push -f --set-upstream origin $UPGRADE_BRANCH master
       env: 
         GH_USERNAME: github-actions
 
