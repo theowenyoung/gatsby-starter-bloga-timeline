@@ -5,19 +5,17 @@ env:
   TEMPLATE_REPO: theowenyoung/gatsby-starter-bloga-timeline
   UPGRADE_BRANCH: bloga-automated-upgrade
 jobs:  
-  define:
+  init:
     runs-on: ubuntu-latest
     # Map a step output to a job output
     outputs:
-      TEMPLATE_REPO: ${{ env.TEMPLATE_REPO }}
-      UPGRADE_BRANCH: ${{ env.UPGRADE_BRANCH }}
+      templateRepo: ${{ env.TEMPLATE_REPO }}
     steps:
-      - run: echo "define"
+      - run: echo "init..."
   upgrade:
-    needs: define
+    needs: init
 
-    if: |
-      (github.repository != '${{needs.define.outputs.TEMPLATE_REPO}}')
+    if: (github.repository != needs.init.outputs.templateRepo)
     runs-on: ubuntu-latest
     steps:
     
