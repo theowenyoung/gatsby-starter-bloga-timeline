@@ -10,8 +10,6 @@ env:
 jobs:
   init:
     runs-on: ubuntu-latest
-    env:
-
     outputs:
       isFirstCommit: ${{ (github.event.commits[0].message != 'Initial commit') && (github.run_number > 1) }}
       repositoryName: ${{ steps.repositoryName.outputs.result}}
