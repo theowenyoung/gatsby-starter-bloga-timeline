@@ -10,8 +10,8 @@ env:
 jobs:
   init:
     runs-on: ubuntu-latest
+    # outpus result type is string, true will be "true"
     outputs:
-      test: 222
       isFirstCommit: ${{ (github.event.commits[0].message != 'Initial commit') && (github.run_number > 1) }}
       repositoryName: ${{ steps.repositoryName.outputs.result}}
       sourceBranch: ${{ steps.sourceBranch.outputs.result }}
@@ -65,20 +65,8 @@ jobs:
     needs: init
     runs-on: ubuntu-latest
     name: Build
+    if: ${{ env.SSH_DEPLOY_KEY && needs.init.outputs.isFirstCommit=='false' && needs.init.outputs.isSourceBranch==='true' }}
     steps:
-      - name: echo
-        env:
-          JOB_OUTPUT: ${{ toJson(needs.init.outputs) }} 
-        run: echo $JOB_OUTPUT
-      - name: check param
-        if: ${{ !env.SSH_DEPLOY_KEY || needs.init.outputs.isFirstCommit || !needs.init.outputs.isSourceBranch}}
-        run: exit 1
-      - name: print test
-        run: echo test
-      - name: pirnt SSH_DEPLOY_KEY
-        run: echo "xxx$SSH_DEPLOY_KEY"
-      - name: print xxx
-        run: echo "yyy$BLOGA_SITE_CONFIG_URL"
       - uses: actions/github-script@v2
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
