@@ -72,7 +72,7 @@ jobs:
         run: echo $JOB_OUTPUT
       - name: check param
         if: ${{ !env.SSH_DEPLOY_KEY || needs.init.outputs.isFirstCommit || !needs.init.outputs.isSourceBranch}}
-        run: exit 1
+        run: exit 0
       - name: print test
         run: echo test
       - name: pirnt SSH_DEPLOY_KEY
