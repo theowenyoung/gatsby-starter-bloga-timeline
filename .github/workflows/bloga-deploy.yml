@@ -15,7 +15,7 @@ jobs:
       isFirstCommit: ${{ (github.event.commits[0].message != 'Initial commit') && (github.run_number > 1) }}
       repositoryName: ${{ steps.repositoryName.outputs.result}}
       sourceBranch: ${{ steps.sourceBranch.outputs.result }}
-      deployBranch: ${{ steps.sourceBranch.outputs.result }}
+      deployBranch: ${{ steps.deployBranch.outputs.result }}
       isSourceBranch: ${{ steps.isSourceBranch.outputs.result }}
     steps:
       - run: echo init...
@@ -72,7 +72,7 @@ jobs:
         run: echo $JOB_OUTPUT
       - name: check param
         if: ${{ !env.SSH_DEPLOY_KEY || needs.init.outputs.isFirstCommit || !needs.init.outputs.isSourceBranch}}
-        run: exit 0
+        run: exit 1
       - name: print test
         run: echo test
       - name: pirnt SSH_DEPLOY_KEY
