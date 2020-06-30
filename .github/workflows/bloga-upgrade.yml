@@ -7,14 +7,59 @@ env:
 jobs:  
   init:
     runs-on: ubuntu-latest
-    # Map a step output to a job output
+    # outpus result type is string, true will be "true"
     outputs:
       templateRepo: ${{ env.TEMPLATE_REPO }}
+      isFirstCommit: ${{ (github.event.commits[0].message == 'Initial commit') && (github.run_number == 1) }}
+      repositoryName: ${{ steps.repositoryName.outputs.result}}
+      sourceBranch: ${{ steps.sourceBranch.outputs.result }}
+      deployBranch: ${{ steps.deployBranch.outputs.result }}
+      isSourceBranch: ${{ steps.isSourceBranch.outputs.result }}
     steps:
-      - run: echo "init..."
+      - run: echo init...
+      - uses: jungwinter/split@v1.1.0
+        id: split
+        with:
+          msg: ${{ github.repository }}
+          seperator: "/"
+      - id: repositoryName
+        uses: actions/github-script@v2
+        with:
+          script: return context.repo.repo
+          result-encoding: string
+      - id: sourceBranch
+        uses: actions/github-script@v2
+        with:
+          script: |
+            if(context.repo.repo === `${context.repo.owner}.github.io`){
+              return 'source'
+            }else{
+              return 'master'
+            }
+          result-encoding: string
+      - id: deployBranch
+        uses: actions/github-script@v2
+        with:
+          script: |
+            if(context.repo.repo === `${context.repo.owner}.github.io`){
+              return 'master'
+            }else{
+              return 'gh-pages'
+            }
+          result-encoding: string
+      - id: isSourceBranch
+        uses: actions/github-script@v2
+        env:
+          SOURCE_BRANCH: ${{ steps.sourceBranch.outputs.result }}
+        with:
+          script: |
+            if(`refs/heads/${process.env.SOURCE_BRANCH}` === context.ref){
+              return true
+            }else{
+              return false
+            }
   upgrade:
     needs: init
-
     if: (github.repository != needs.init.outputs.templateRepo)
     runs-on: ubuntu-latest
     steps:
@@ -69,10 +114,10 @@ jobs:
         git checkout -b $UPGRADE_BRANCH
         git add -A
         git commit -m 'upgrade bloga'
-        git push -f --set-upstream origin $UPGRADE_BRANCH master
+        git push -f --set-upstream origin $UPGRADE_BRANCH $SOURCE_BRANCH
       env: 
         GH_USERNAME: github-actions
-
+        SOURCE_BRANCH: ${{ needs.init.outputs.sourceBranch }}
     - name: Open a PR
       id: pr
       uses: actions/github-script@0.6.0
