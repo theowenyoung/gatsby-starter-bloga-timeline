@@ -114,7 +114,7 @@ jobs:
         git checkout -b $UPGRADE_BRANCH
         git add -A
         git commit -m 'upgrade bloga'
-        git push -f --set-upstream origin $UPGRADE_BRANCH $SOURCE_BRANCH
+        git push -f --set-upstream origin/$UPGRADE_BRANCH
       env: 
         GH_USERNAME: github-actions
         SOURCE_BRANCH: ${{ needs.init.outputs.sourceBranch }}
