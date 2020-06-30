@@ -142,6 +142,6 @@ jobs:
         with:
           deploy_key: ${{ secrets.SSH_DEPLOY_KEY }}
           publish_dir: ./public
-          publish_branch: gh-pages
+          publish_branch: ${{ needs.init.outputs.deployBranch }}
           user_name: "github-actions[bot]"
           user_email: "github-actions[bot]@users.noreply.github.com"
