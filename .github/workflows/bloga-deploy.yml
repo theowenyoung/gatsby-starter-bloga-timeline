@@ -63,12 +63,15 @@ jobs:
   
   build:
     needs: init
-    if: (!needs.init.outputs.isFirstCommit) && (needs.init.outputs.isSourceBranch)
     runs-on: ubuntu-latest
     name: Build
     steps:
+      - name: echo
+        env:
+          JOB_OUTPUT: ${{ toJson(needs.init.outputs) }} 
+        run: echo $JOB_OUTPUT
       - name: check param
-        if: ${{ !env.SSH_DEPLOY_KEY }}
+        if: ${{ !env.SSH_DEPLOY_KEY || needs.init.outputs.isFirstCommit || !needs.init.outputs.isSourceBranch}}
         run: exit 1
       - name: print test
         run: echo test
