@@ -1,7 +1,5 @@
 on:
   push:
-    branches:
-        - master
   repository_dispatch:
     types: [redeploy]
 env:
@@ -10,9 +8,52 @@ env:
   BLOGA_SITE_CONFIG_URL: ${{ secrets.BLOGA_SITE_CONFIG_URL }}
   SSH_DEPLOY_KEY: ${{secrets.SSH_DEPLOY_KEY }}
 jobs:
+  init:
+    runs-on: ubuntu-latest
+    env:
+
+    outputs:
+      isFirstCommit: ${{ (github.event.commits[0].message != 'Initial commit') && (github.run_number > 1) }}
+      repositoryName: ${{ steps.repositoryName.outputs.result}}
+      sourceBranch: ${{ steps.sourceBranch.outputs.result}}
+      deployBranch: ${{ steps.sourceBranch.outputs.result}}
+      isSourceBranch: ${{ "refs/heads/"+steps.sourceBranch.outputs.result == github.ref}}
+    steps:
+      - run: echo init...
+      - uses: jungwinter/split@v1.1.0
+        id: split
+        with:
+          msg: ${{ github.repository }}
+          seperator: "/"
+      - id: repositoryName
+        uses: actions/github-script@v2
+        with:
+          script: return context.repo.repo
+          result-encoding: string
+      - id: sourceBranch
+        uses: actions/github-script@v2
+        with:
+          script: |
+            if(context.repo.repo === `${context.repo.owner}.github.io`){
+              return 'source'
+            }else{
+              return 'master'
+            }
+          result-encoding: string
+      - id: deployBranch
+        uses: actions/github-script@v2
+        with:
+          script: |
+            if(context.repo.repo === `${context.repo.owner}.github.io`){
+              return 'master'
+            }else{
+              return 'gh-pages'
+            }
+          result-encoding: string
   
   build:
-    if: (github.event.commits[0].message != 'Initial commit') && (github.run_number > 1)
+    needs: init
+    if: (!needs.init.outputs.isFirstCommit) && (isSourceBranch)
     runs-on: ubuntu-latest
     name: Build
     steps:
