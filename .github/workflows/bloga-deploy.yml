@@ -65,8 +65,11 @@ jobs:
     needs: init
     runs-on: ubuntu-latest
     name: Build
-    if: ${{ env.SSH_DEPLOY_KEY && needs.init.outputs.isFirstCommit=='false' && needs.init.outputs.isSourceBranch==='true' }}
+    if: ${{  needs.init.outputs.isFirstCommit=='false' && needs.init.outputs.isSourceBranch==='true' }}
     steps:
+      - name: check param
+        if: !env.SSH_DEPLOY_KEY
+        run: exit 1
       - uses: actions/github-script@v2
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
