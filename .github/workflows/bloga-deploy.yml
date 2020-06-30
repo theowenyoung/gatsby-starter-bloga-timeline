@@ -18,7 +18,6 @@ jobs:
       deployBranch: ${{ steps.deployBranch.outputs.result }}
       isSourceBranch: ${{ steps.isSourceBranch.outputs.result }}
     steps:
-      - run: echo trigger1
       - id: repositoryName
         uses: actions/github-script@v2
         with:
