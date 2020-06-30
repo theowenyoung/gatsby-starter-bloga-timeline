@@ -62,7 +62,7 @@ jobs:
   
   build:
     needs: init
-    if: (!needs.init.outputs.isFirstCommit) && (isSourceBranch)
+    if: (!needs.init.outputs.isFirstCommit) && (needs.init.outputs.isSourceBranch)
     runs-on: ubuntu-latest
     name: Build
     steps:
