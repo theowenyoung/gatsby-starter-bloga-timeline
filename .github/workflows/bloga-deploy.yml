@@ -65,11 +65,12 @@ jobs:
     needs: init
     runs-on: ubuntu-latest
     name: Build
-    # if:  (needs.init.outputs.isFirstCommit=='false')  && (needs.init.outputs.isSourceBranch=='true')
+    if:  (needs.init.outputs.isFirstCommit=='false')  && (needs.init.outputs.isSourceBranch=='true')
     steps:
-      - run: echo $OUT && exit 1
+      - name: Dump INIT_OUTPUTS
+        run: echo $INIT_OUTPUTS 
         env:
-          OUT: ${{ toJson(needs.init.outputs) }}
+          INIT_OUTPUTS: ${{ toJson(needs.init.outputs) }}
       - name: check param
         if: (!env.SSH_DEPLOY_KEY)
         run: exit 1
