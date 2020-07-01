@@ -121,7 +121,7 @@ jobs:
         SOURCE_BRANCH: ${{ needs.init.outputs.sourceBranch }}
     - name: Open a PR
       id: pr
-      uses: actions/github-script@0.6.0
+      uses: actions/github-script@v2
       env:
         SOURCE_BRANCH: ${{ needs.init.outputs.sourceBranch }}
       with:
