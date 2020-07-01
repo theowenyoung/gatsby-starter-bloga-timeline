@@ -1,3 +1,4 @@
+name: Upgrade
 on:
   repository_dispatch:
     types: [upgrade]
