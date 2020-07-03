@@ -17,6 +17,7 @@ jobs:
       repositoryName: ${{ steps.repositoryName.outputs.result}}
       sourceBranch: ${{ steps.sourceBranch.outputs.result }}
       deployBranch: ${{ steps.deployBranch.outputs.result }}
+      isDeployBranchExist: ${{ steps.isDeployBranchExist.outputs.result }}
       isSourceBranch: ${{ steps.isSourceBranch.outputs.result }}
       blogaAccessToken: ${{ steps.blogaAccessToken.outputs.result }}
       blogaSiteId: ${{ steps.blogaSiteId.outputs.result }}
@@ -69,6 +70,28 @@ jobs:
               return false
             }
           result-encoding: string
+      - id: isDeployBranchExist
+        uses: actions/github-script@v2
+        env:
+          DEPLOY_BRANCH: ${{ steps.deployBranch.outputs.result }}
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            return github.repos.getBranch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              branch: process.env.DEPLOY_BRANCH
+            }).then(data=>{
+              return true;
+            }).catch((e)=>{
+              if(e && e.status===404){
+                // then manual trigger
+                return false
+              }else{
+                core.setFailed('check isDeployBranchExist error: ',e.message)
+              }
+            })
+
       - id: blogaSiteId
         if: steps.isFirstCommit.outputs.result == 'false'
         uses: actions/github-script@v2
@@ -191,6 +214,7 @@ jobs:
           fetch-depth: 0
       - name: Get gatsby cache key from last build
         id: get-gatsby-latest-cache-key-file
+        if: needs.init.outputs.isDeployBranchExist == 'true'
         uses: actions/checkout@v2
         continue-on-error: true
         with:
