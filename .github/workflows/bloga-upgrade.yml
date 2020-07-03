@@ -316,4 +316,9 @@ jobs:
                         })
     - name: Trigger redeploy
       if: ${{ steps.mergePr.outcome == 'success' }}
-      uses: actions/github-script@v2
+      uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
+      with:
+          url: 'https://api.bloga.owenyoung.com/api/v1/sites/${{ needs.init.outputs.blogaSiteId }}/deploys'
+          method: 'POST'
+          headers: '{"Content-Type": "application/json","Authorization":"Bearer ${{ needs.init.outputs.blogaAccessToken }}"}'
+         
