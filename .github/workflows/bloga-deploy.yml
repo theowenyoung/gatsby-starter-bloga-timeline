@@ -22,6 +22,7 @@ jobs:
       isSourceBranch: ${{ steps.isSourceBranch.outputs.result }}
       blogaAccessToken: ${{ steps.blogaAccessToken.outputs.result }}
       blogaSiteId: ${{ steps.blogaSiteId.outputs.result }}
+      pathPrefix: ${{ steps.pathPrefix.outputs.result }}
     steps:
       - id: isFirstCommit
         uses: actions/github-script@v2
@@ -29,7 +30,7 @@ jobs:
           COMMIT_MESSAGE: ${{ github.event.commits[0].message }}
           RUN_NUMBER: ${{ github.run_number }}
         with:
-          script: return (process.env.COMMIT_MESSAGE == 'Initial commit') && (process.env.RUN_NUMBER == '1') 
+          script: return (process.env.RUN_NUMBER == '1') 
           result-encoding: string
       - id: repositoryName
         uses: actions/github-script@v2
@@ -113,6 +114,28 @@ jobs:
               core.setFailed(`Can not get bloga access token`);
             }
           result-encoding: string
+      - id: blogaSettingsResponse
+        if: steps.isFirstCommit.outputs.result == 'false'
+        uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
+        with:
+            url: ${{ secrets.BLOGA_SITE_CONFIG_URL }}
+            method: 'GET'
+            headers: '{"Content-Type": "application/json"}'
+      - id: pathPrefix
+        if: steps.isFirstCommit.outputs.result == 'false'
+        uses: actions/github-script@v2
+        env:
+          RESPONSE: ${{ steps.blogaSettingsResponse.outputs.response }}
+        with:
+          script: |
+            const response = JSON.parse(process.env.RESPONSE)
+            if(response.pathPrefix){
+              return response.pathPrefix
+            }else{
+              return ""
+            }
+          result-encoding: string
+
   build:
     needs: init
     runs-on: ubuntu-latest
@@ -161,7 +184,11 @@ jobs:
       - name: Yarn install
         run: 'yarn --pure-lockfile'
       - name: Build app
+        if: needs.init.outputs.pathPrefix == ""
         run: yarn build
+      - name: Build app with prefix path
+        if: needs.init.outputs.pathPrefix != ""
+        run: yarn build --prefix-paths
       - name: Get gatsby latest cache folder hash
         id: gatsby-latest-cache-hash
         uses: theowenyoung/folder-hash@v2.0.1
@@ -178,10 +205,6 @@ jobs:
             public
       - name: Save cache key to file
         run: echo gatsby-cache-directory-${{ steps.gatsby-latest-cache-hash.outputs.hash}} > public/_gatsby-latest-cache-key.txt
-      - uses: actions/upload-artifact@v2
-        with:
-          name: gatsby-latest-cache-key
-          path: public/_gatsby-latest-cache-key.txt
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3.6.1
         with:
