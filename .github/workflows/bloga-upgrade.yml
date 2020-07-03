@@ -24,6 +24,7 @@ jobs:
       pathPrefix: ${{ steps.pathPrefix.outputs.result }}
       templateRepo: ${{ steps.templateRepo.outputs.full_name }}
       templateBranch: ${{ steps.templateBranch.outputs.result }}
+      forceUpdate: ${{ github.event.client_payload.force }}
     steps:
       - id: isFirstCommit
         name: Check is first commit
