@@ -31,7 +31,7 @@
     "@theowenyoung/gatsby-source-git": "^1.0.8",
     "@theowenyoung/gatsby-source-instagram": "^0.9.1",
     "@theowenyoung/gatsby-source-twitter": "^3.5.0",
-    "bloga-gatsby": "^0.0.7",
+    "bloga-gatsby": "^0.0.9",
     "deepmerge": "^4.2.2",
     "fetch-retry": "^3.1.0",
     "fs-extra": "^9.0.0",
