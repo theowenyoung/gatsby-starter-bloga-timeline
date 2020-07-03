@@ -26,6 +26,7 @@ jobs:
       AUTH1_CLIENT_SECRET: ${{ steps.AUTH1_CLIENT_SECRET.outputs.result }}
     steps:
       - id: isFirstCommit
+        name: Check is first commit
         uses: actions/github-script@v2
         env: 
           COMMIT_MESSAGE: ${{ github.event.commits[0].message }}
@@ -34,11 +35,13 @@ jobs:
           script: return (process.env.RUN_NUMBER == '1') 
           result-encoding: string
       - id: repositoryName
+        name: get repository name
         uses: actions/github-script@v2
         with:
           script: return context.repo.repo
           result-encoding: string
       - id: sourceBranch
+        name: get source branch
         uses: actions/github-script@v2
         with:
           script: |
@@ -49,6 +52,7 @@ jobs:
             }
           result-encoding: string
       - id: deployBranch
+        name: get deploy branch
         uses: actions/github-script@v2
         with:
           script: |
@@ -59,6 +63,7 @@ jobs:
             }
           result-encoding: string
       - id: isSourceBranch
+        name: get current branch is source branch
         uses: actions/github-script@v2
         env:
           SOURCE_BRANCH: ${{ steps.sourceBranch.outputs.result }}
@@ -71,6 +76,7 @@ jobs:
             }
           result-encoding: string
       - id: isDeployBranchExist
+        name: get is deploy branch exist
         uses: actions/github-script@v2
         env:
           DEPLOY_BRANCH: ${{ steps.deployBranch.outputs.result }}
@@ -93,6 +99,7 @@ jobs:
             })
 
       - id: blogaSiteId
+        name: get bloga site id
         if: steps.isFirstCommit.outputs.result == 'false'
         uses: actions/github-script@v2
         env:
@@ -116,6 +123,7 @@ jobs:
             }
           result-encoding: string          
       - id: blogaAccessTokenResponse
+        name: get bloga access token response
         if: steps.isFirstCommit.outputs.result == 'false'
         uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
         with:
@@ -124,6 +132,7 @@ jobs:
             headers: '{"Content-Type": "application/json"}'
             data: '{"client_id": "${{ secrets.BLOGA_CLIENT_ID }}","client_secret": "${{ secrets.BLOGA_CLIENT_SECRET }}","grant_type":"client_credentials"}'
       - id: blogaAccessToken
+        name: get bloga access token
         if: steps.isFirstCommit.outputs.result == 'false'
         uses: actions/github-script@v2
         env:
@@ -139,6 +148,7 @@ jobs:
             }
           result-encoding: string
       - id: blogaSettingsResponse
+        name: get bloga settings response
         if: steps.isFirstCommit.outputs.result == 'false'
         uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
         with:
@@ -146,6 +156,7 @@ jobs:
             method: 'GET'
             headers: '{"Content-Type": "application/json"}'
       - id: pathPrefix
+        name: get path prefix
         if: steps.isFirstCommit.outputs.result == 'false'
         uses: actions/github-script@v2
         env:
@@ -160,6 +171,7 @@ jobs:
             }
           result-encoding: string
       - id: blogaAuth1ClientResponse
+        name: get bloga auth1 client response
         if: steps.isFirstCommit.outputs.result == 'false'
         uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
         with:
@@ -167,6 +179,7 @@ jobs:
             method: 'GET'
             headers: '{"Content-Type": "application/json","Authorization":"Bearer ${{ steps.blogaAccessToken.outputs.result }}"}'
       - id: AUTH1_CLIENT_ID
+        name: get auth1 client id
         if: steps.isFirstCommit.outputs.result == 'false'
         uses: actions/github-script@v2
         env:
@@ -181,6 +194,7 @@ jobs:
             }
           result-encoding: string
       - id: AUTH1_CLIENT_SECRET
+        name: get auth1 client secret
         if: steps.isFirstCommit.outputs.result == 'false'
         uses: actions/github-script@v2
         env:
@@ -211,7 +225,8 @@ jobs:
       - name: check param
         if: (!env.SSH_DEPLOY_KEY)
         run: exit 1
-      - uses: actions/checkout@v2
+      - name: checkout repo
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - name: Get gatsby cache key from last build
