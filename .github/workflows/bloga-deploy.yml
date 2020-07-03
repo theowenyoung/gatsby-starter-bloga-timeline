@@ -6,6 +6,8 @@ on:
 env:
   AUTH1_CLIENT_ID: ${{ secrets.AUTH1_CLIENT_ID }}
   AUTH1_CLIENT_SECRET: ${{ secrets.AUTH1_CLIENT_SECRET }}
+  BLOGA_CLIENT_ID:  ${{ secrets.BLOGA_CLIENT_ID }}
+  BLOGA_CLIENT_SECRET:  ${{ secrets.BLOGA_CLIENT_SECRET }}
   BLOGA_SITE_CONFIG_URL: ${{ secrets.BLOGA_SITE_CONFIG_URL }}
   SSH_DEPLOY_KEY: ${{secrets.SSH_DEPLOY_KEY }}
 jobs:
@@ -18,6 +20,8 @@ jobs:
       sourceBranch: ${{ steps.sourceBranch.outputs.result }}
       deployBranch: ${{ steps.deployBranch.outputs.result }}
       isSourceBranch: ${{ steps.isSourceBranch.outputs.result }}
+      blogaAccessToken: ${{ steps.blogaAccessToken.outputs.result }}
+      blogaSiteId: ${{ steps.blogaSiteId.outputs.result }}
     steps:
       - id: repositoryName
         uses: actions/github-script@v2
@@ -55,7 +59,49 @@ jobs:
             }else{
               return false
             }
-  
+          result-encoding: string
+      - id: blogaSiteId
+        uses: actions/github-script@v2
+        env:
+          BLOGA_SITE_CONFIG_URL: ${{ secrets.BLOGA_SITE_CONFIG_URL }}
+        with:
+          script: |
+            const siteSettingsUrl = process.env.BLOGA_SITE_CONFIG_URL
+            if(siteSettingsUrl){
+              let startIndex = siteSettingsUrl.indexOf('/sites/')
+              const endIndex = siteSettingsUrl.indexOf('/settings')
+              if(startIndex && endIndex){
+                startIndex += 7;
+                const siteId = siteSettingsUrl.substring(startIndex,endIndex)
+                return siteId
+              }else{
+                core.setFailed('can not detect a valid bloga site config url')
+              }
+
+            } else {
+              core.setFailed('can not detect bloga site config url')
+            }
+          result-encoding: string          
+      - id: blogaAccessTokenResponse
+        uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
+        with:
+            url: 'https://auth.owenyoung.com/api/v1/oauth/token'
+            method: 'POST'
+            headers: '{"Content-Type": "application/json"}'
+            data: '{"client_id": "${{ secrets.BLOGA_CLIENT_ID }}","client_secret": "${{ secrets.BLOGA_CLIENT_SECRET }}","grant_type":"client_credentials"}'
+      - id: blogaAccessToken
+        uses: actions/github-script@v2
+        env:
+          RESPONSE: ${{ steps.blogaAccessTokenResponse.outputs.response }}
+        with:
+          script: |
+            const response = JSON.parse(process.env.RESPONSE)
+            if(response.data.access_token){
+              return response.data.access_token
+            }else{
+              core.setFailed(`Can not get bloga access token`);
+            }
+          result-encoding: string
   build:
     needs: init
     runs-on: ubuntu-latest
@@ -133,18 +179,33 @@ jobs:
           publish_branch: ${{ needs.init.outputs.deployBranch }}
           user_name: "github-actions[bot]"
           user_email: "github-actions[bot]@users.noreply.github.com"
-      - name: Trigger the site build
+      - name: Check is need trigger the site build
+        id: isNeedTriggerSiteBuild
         uses: actions/github-script@v2
         env:
           DEPLOY_BRANCH: ${{ needs.init.outputs.deployBranch }}
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            github.repos.createPagesSite({
-                          owner: context.repo.owner,
-                          repo: context.repo.repo,
-                          })
-                        .catch(e=>{
-                          console.error('error',e)
-                        })
-  
+            return github.request(`GET /repos/:owner/:repo/pages`,{
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            }).then(data=>{
+              console.log('data',data)
+              return false;
+            }).catch((e)=>{
+              console.log('e',e)
+              if(e && e.status===404){
+                // then manual trigger
+                return true
+              }else{
+                core.setFailed('check is need trigger page build error: ',e.message)
+              }
+            })
+      - name: trigger site build
+        if: steps.isNeedTriggerSiteBuild.outputs.result == 'true'
+        uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
+        with:
+            url: 'https://api.bloga.owenyoung.com/api/v1/sites/${{ needs.init.outputs.blogaSiteId }}/github-pages'
+            method: 'POST'
+            headers: '{"Content-Type": "application/json","Authorization":"Bearer ${{ needs.init.outputs.blogaAccessToken }}"}'      
