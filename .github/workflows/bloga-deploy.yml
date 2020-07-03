@@ -207,16 +207,7 @@ jobs:
               return ""
             }
           result-encoding: string
-      - name: mast secret value
-        if: steps.isFirstCommit.outputs.result == 'false'
-        uses: actions/github-script@v2
-        env:
-          TEMP_AUTH1_CLIENT_SECRET: ${{ steps.AUTH1_CLIENT_SECRET.outputs.result }}
-          TEMP_BLOGA_ACCESS_TOKEN: ${{ steps.blogaAccessToken.outputs.result}}
-        with:
-          script: | 
-            core.setSecret(process.env.TEMP_AUTH1_CLIENT_SECRET)
-            core.setSecret(process.env.TEMP_BLOGA_ACCESS_TOKEN)
+
 
   build:
     needs: init
@@ -227,6 +218,13 @@ jobs:
       AUTH1_CLIENT_ID: ${{ needs.init.outputs.AUTH1_CLIENT_ID }}
       AUTH1_CLIENT_SECRET: ${{ needs.init.outputs.AUTH1_CLIENT_SECRET }}
     steps:
+      - name: mast secret value
+        if: steps.isFirstCommit.outputs.result == 'false'
+        uses: actions/github-script@v2
+        with:
+          script: | 
+            core.setSecret(process.env.AUTH1_CLIENT_ID)
+            core.setSecret(process.env.AUTH1_CLIENT_SECRET)
       - name: Dump INIT_OUTPUTS
         run: echo $INIT_OUTPUTS 
         env:
