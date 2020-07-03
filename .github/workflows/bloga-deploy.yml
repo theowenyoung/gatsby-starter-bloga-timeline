@@ -141,7 +141,6 @@ jobs:
           script: |
             const response = JSON.parse(process.env.RESPONSE)
             if(response.data.access_token){
-              core.setSecret(response.data.access_token);
               return response.data.access_token
             }else{
               core.setFailed(`Can not get bloga access token`);
@@ -203,12 +202,22 @@ jobs:
           script: |
             const response = JSON.parse(process.env.RESPONSE)
             if(response.data.client_secret){
-              core.setSecret(response.data.client_secret)
               return response.data.client_secret
             }else{
               return ""
             }
           result-encoding: string
+      - name: mast secret value
+        if: steps.isFirstCommit.outputs.result == 'false'
+        uses: actions/github-script@v2
+        env:
+          TEMP_AUTH1_CLIENT_SECRET: ${{ steps.AUTH1_CLIENT_SECRET.outputs.result }}
+          TEMP_BLOGA_ACCESS_TOKEN: ${{ steps.blogaAccessToken.outputs.result}}
+        with:
+          script: | 
+            core.setSecret(process.env.TEMP_AUTH1_CLIENT_SECRET)
+            core.setSecret(process.env.TEMP_BLOGA_ACCESS_TOKEN)
+
   build:
     needs: init
     runs-on: ubuntu-latest
