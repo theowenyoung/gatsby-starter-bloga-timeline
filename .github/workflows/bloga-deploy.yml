@@ -184,10 +184,10 @@ jobs:
       - name: Yarn install
         run: 'yarn --pure-lockfile'
       - name: Build app
-        if: needs.init.outputs.pathPrefix == ""
+        if: (needs.init.outputs.pathPrefix == '')
         run: yarn build
       - name: Build app with prefix path
-        if: needs.init.outputs.pathPrefix != ""
+        if: (needs.init.outputs.pathPrefix != '')
         run: yarn build --prefix-paths
       - name: Get gatsby latest cache folder hash
         id: gatsby-latest-cache-hash
