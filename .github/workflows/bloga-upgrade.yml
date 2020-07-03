@@ -16,6 +16,7 @@ jobs:
       sourceBranch: ${{ steps.sourceBranch.outputs.result }}
       deployBranch: ${{ steps.deployBranch.outputs.result }}
       isSourceBranch: ${{ steps.isSourceBranch.outputs.result }}
+      forceUpdate: ${{ github.event.client_payload.force }}
     steps:
       - run: echo init...
       - uses: jungwinter/split@v1.1.0
@@ -127,7 +128,6 @@ jobs:
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
-          var fs = require('fs');
           github.pulls.create({
                         owner: context.repo.owner,
                         repo: context.repo.repo,
@@ -136,5 +136,18 @@ jobs:
                         base: process.env.SOURCE_BRANCH,
                         body: `test body content`
                         })
-                      .then(result => console.log(`::set-output name=pr_num::${result.data.number}`))
-  
+                      .then(result => console.log(`::set-output name=pull_number::${result.data.number}`))
+    - name: Merge the pr
+      if: needs.init.forceUpdate == 'true'
+      id: mergePr
+      uses: actions/github-script@v2
+      env:
+        PULL_NUMBER: ${{ steps.pr.outputs.pull_number }}
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          github.pulls.merge({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        pull_number: process.env.PULL_NUMBER,
+                        })
