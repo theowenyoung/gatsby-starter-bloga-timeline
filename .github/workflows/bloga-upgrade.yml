@@ -204,21 +204,6 @@ jobs:
               return ""
             }
           result-encoding: string
-
-        name: get auth1 client secret
-        if: steps.isFirstCommit.outputs.result == 'false'
-        uses: actions/github-script@v2
-        env:
-          RESPONSE: ${{ steps.blogaAuth1ClientResponse.outputs.response }}
-        with:
-          script: |
-            const response = JSON.parse(process.env.RESPONSE)
-            if(response.data.client_secret){
-              return response.data.client_secret
-            }else{
-              return ""
-            }
-          result-encoding: string
   upgrade:
     needs: init
     if: (github.repository != needs.init.outputs.templateRepo)
