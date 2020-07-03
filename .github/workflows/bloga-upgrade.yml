@@ -32,7 +32,7 @@ jobs:
           COMMIT_MESSAGE: ${{ github.event.commits[0].message }}
           RUN_NUMBER: ${{ github.run_number }}
         with:
-          script: return (process.env.RUN_NUMBER == '1') 
+          script: return (process.env.RUN_NUMBER == '1' && process.env.COMMIT_MESSAGE == 'Initial commit') 
           result-encoding: string
       - id: repositoryName
         name: get repository name
