@@ -4,8 +4,6 @@ on:
   repository_dispatch:
     types: [redeploy]
 env:
-  AUTH1_CLIENT_ID: ${{ secrets.AUTH1_CLIENT_ID }}
-  AUTH1_CLIENT_SECRET: ${{ secrets.AUTH1_CLIENT_SECRET }}
   BLOGA_CLIENT_ID:  ${{ secrets.BLOGA_CLIENT_ID }}
   BLOGA_CLIENT_SECRET:  ${{ secrets.BLOGA_CLIENT_SECRET }}
   BLOGA_SITE_CONFIG_URL: ${{ secrets.BLOGA_SITE_CONFIG_URL }}
@@ -23,6 +21,8 @@ jobs:
       blogaAccessToken: ${{ steps.blogaAccessToken.outputs.result }}
       blogaSiteId: ${{ steps.blogaSiteId.outputs.result }}
       pathPrefix: ${{ steps.pathPrefix.outputs.result }}
+      AUTH1_CLIENT_ID: ${{ steps.AUTH1_CLIENT_ID.outputs.result }}
+      AUTH1_CLIENT_SECRET: ${{ steps.AUTH1_CLIENT_SECRET.outputs.result }}
     steps:
       - id: isFirstCommit
         uses: actions/github-script@v2
@@ -135,12 +135,49 @@ jobs:
               return ""
             }
           result-encoding: string
-
+      - id: blogaAuth1ClientResponse
+        if: steps.isFirstCommit.outputs.result == 'false'
+        uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
+        with:
+            url: 'https://api.bloga.owenyoung.com/api/v1/apps/auth1/client'
+            method: 'GET'
+            headers: '{"Content-Type": "application/json","Authorization":"Bearer ${{ steps.blogaAccessToken.outputs.result }}"}'
+      - id: AUTH1_CLIENT_ID
+        if: steps.isFirstCommit.outputs.result == 'false'
+        uses: actions/github-script@v2
+        env:
+          RESPONSE: ${{ steps.blogaAuth1ClientResponse.outputs.response }}
+        with:
+          script: |
+            const response = JSON.parse(process.env.RESPONSE)
+            if(response.data.client_id){
+              return response.data.client_id
+            }else{
+              return ""
+            }
+          result-encoding: string
+      - id: AUTH1_CLIENT_SECRET
+        if: steps.isFirstCommit.outputs.result == 'false'
+        uses: actions/github-script@v2
+        env:
+          RESPONSE: ${{ steps.blogaAuth1ClientResponse.outputs.response }}
+        with:
+          script: |
+            const response = JSON.parse(process.env.RESPONSE)
+            if(response.data.client_secret){
+              return response.data.client_secret
+            }else{
+              return ""
+            }
+          result-encoding: string
   build:
     needs: init
     runs-on: ubuntu-latest
     name: Build
     if:  (needs.init.outputs.isFirstCommit=='false')  && (needs.init.outputs.isSourceBranch=='true')
+    env:
+      AUTH1_CLIENT_ID: ${{ needs.init.outputs.AUTH1_CLIENT_ID }}
+      AUTH1_CLIENT_SECRET: ${{ needs.init.outputs.AUTH1_CLIENT_SECRET }}
     steps:
       - name: Dump INIT_OUTPUTS
         run: echo $INIT_OUTPUTS 
