@@ -18,7 +18,9 @@ jobs:
       isSourceBranch: ${{ steps.isSourceBranch.outputs.result }}
       forceUpdate: ${{ github.event.client_payload.force }}
     steps:
-      - run: echo init...
+      - run: echo $CONTEXT
+        env:
+          CONTEXT: ${{ toJson(github) }}
       - uses: jungwinter/split@v1.1.0
         id: split
         with:

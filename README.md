@@ -1,4 +1,4 @@
 # Bloga
 
-trigger6
+trigger7
 > todo
