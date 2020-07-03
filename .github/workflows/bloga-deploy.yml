@@ -1,7 +1,6 @@
 name: Deploy
 on:
   push:
-  pull_request:
   repository_dispatch:
     types: [redeploy]
 env:
@@ -9,6 +8,7 @@ env:
   BLOGA_CLIENT_SECRET:  ${{ secrets.BLOGA_CLIENT_SECRET }}
   BLOGA_SITE_CONFIG_URL: ${{ secrets.BLOGA_SITE_CONFIG_URL }}
   SSH_DEPLOY_KEY: ${{secrets.SSH_DEPLOY_KEY }}
+  UPGRADE_BRANCH: bloga-automated-upgrade
 jobs:
   init:
     runs-on: ubuntu-latest
@@ -23,6 +23,8 @@ jobs:
       blogaAccessToken: ${{ steps.blogaAccessToken.outputs.result }}
       blogaSiteId: ${{ steps.blogaSiteId.outputs.result }}
       pathPrefix: ${{ steps.pathPrefix.outputs.result }}
+      templateUrl: ${{ steps.templateUrl.outputs.result }}
+      templateBranch: ${{ steps.templateBranch.outputs.result }}
       AUTH1_CLIENT_ID: ${{ steps.AUTH1_CLIENT_ID.outputs.result }}
       AUTH1_CLIENT_SECRET: ${{ steps.AUTH1_CLIENT_SECRET.outputs.result }}
     steps:
@@ -166,6 +168,36 @@ jobs:
             const response = JSON.parse(process.env.RESPONSE)
             if(response.pathPrefix){
               return response.pathPrefix
+            }else{
+              return ""
+            }
+          result-encoding: string
+      - id: templateUrl
+        name: get template url
+        if: steps.isFirstCommit.outputs.result == 'false'
+        uses: actions/github-script@v2
+        env:
+          RESPONSE: ${{ steps.blogaSettingsResponse.outputs.response }}
+        with:
+          script: |
+            const response = JSON.parse(process.env.RESPONSE)
+            if(response.pathPrefix){
+              return response.template_url
+            }else{
+              return ""
+            }
+          result-encoding: string
+      - id: templateBranch
+        name: get template branch
+        if: steps.isFirstCommit.outputs.result == 'false'
+        uses: actions/github-script@v2
+        env:
+          RESPONSE: ${{ steps.blogaSettingsResponse.outputs.response }}
+        with:
+          script: |
+            const response = JSON.parse(process.env.RESPONSE)
+            if(response.pathPrefix){
+              return response.template_branch
             }else{
               return ""
             }
