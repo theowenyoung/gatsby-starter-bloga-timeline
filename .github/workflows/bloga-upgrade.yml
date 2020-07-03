@@ -138,7 +138,7 @@ jobs:
                         })
                       .then(result => console.log(`::set-output name=pull_number::${result.data.number}`))
     - name: Merge the pr
-      if: needs.init.forceUpdate == 'true'
+      if: needs.init.outputs.forceUpdate == 'true'
       id: mergePr
       uses: actions/github-script@v2
       env:
