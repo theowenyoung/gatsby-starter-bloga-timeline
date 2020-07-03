@@ -62,7 +62,10 @@ jobs:
     if: (github.repository != needs.init.outputs.templateRepo)
     runs-on: ubuntu-latest
     steps:
-    
+    - name: Dump INIT_OUTPUTS
+      run: echo $INIT_OUTPUTS 
+      env:
+        INIT_OUTPUTS: ${{ toJson(needs.init.outputs) }}
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
