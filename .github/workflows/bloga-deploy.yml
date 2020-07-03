@@ -194,7 +194,7 @@ jobs:
         uses: actions/checkout@v2
         continue-on-error: true
         with:
-          ref: gh-pages
+          ref: ${{ needs.init.outputs.deployBranch }}
           path: .bloga-last-build
       - name: Get gatsby-latest-cache-key content
         if: ${{ steps.get-gatsby-latest-cache-key-file.outcome == 'success' }}
