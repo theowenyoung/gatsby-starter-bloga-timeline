@@ -21,11 +21,6 @@ jobs:
       - run: echo $CONTEXT
         env:
           CONTEXT: ${{ toJson(github) }}
-      - uses: jungwinter/split@v1.1.0
-        id: split
-        with:
-          msg: ${{ github.repository }}
-          seperator: "/"
       - id: repositoryName
         uses: actions/github-script@v2
         with:
