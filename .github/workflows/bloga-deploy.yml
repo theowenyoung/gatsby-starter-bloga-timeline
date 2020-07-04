@@ -12,6 +12,7 @@ env:
 jobs:
   init:
     runs-on: ubuntu-latest
+    if: (secrets.BLOGA_SITE_CONFIG_URL) && (secrets.SSH_DEPLOY_KEY)
     # outpus result type is string, true will be "true"
     outputs:
       isFirstCommit: ${{ steps.isFirstCommit.outputs.result }}
