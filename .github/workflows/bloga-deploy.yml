@@ -12,7 +12,6 @@ env:
 jobs:
   init:
     runs-on: ubuntu-latest
-    if: (secrets.BLOGA_SITE_CONFIG_URL) && (secrets.SSH_DEPLOY_KEY)
     # outpus result type is string, true will be "true"
     outputs:
       isFirstCommit: ${{ steps.isFirstCommit.outputs.result }}
@@ -104,7 +103,7 @@ jobs:
 
       - id: blogaSiteId
         name: get bloga site id
-        if: steps.isFirstCommit.outputs.result == 'false'
+        if: (steps.isFirstCommit.outputs.result == 'false') && (secrets.BLOGA_SITE_CONFIG_URL)
         uses: actions/github-script@v2
         env:
           BLOGA_SITE_CONFIG_URL: ${{ secrets.BLOGA_SITE_CONFIG_URL }}
@@ -128,7 +127,7 @@ jobs:
           result-encoding: string          
       - id: blogaAccessTokenResponse
         name: get bloga access token response
-        if: steps.isFirstCommit.outputs.result == 'false'
+        if: steps.isFirstCommit.outputs.result == 'false' && (secrets.BLOGA_CLIENT_ID) && (secrets.BLOGA_CLIENT_SECRET)
         uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
         with:
             url: 'https://auth.owenyoung.com/api/v1/oauth/token'
@@ -137,7 +136,7 @@ jobs:
             data: '{"client_id": "${{ secrets.BLOGA_CLIENT_ID }}","client_secret": "${{ secrets.BLOGA_CLIENT_SECRET }}","grant_type":"client_credentials"}'
       - id: blogaAccessToken
         name: get bloga access token
-        if: steps.isFirstCommit.outputs.result == 'false'
+        if: steps.isFirstCommit.outputs.result == 'false' && (steps.blogaAccessTokenResponse.outcome == 'success')
         uses: actions/github-script@v2
         env:
           RESPONSE: ${{ steps.blogaAccessTokenResponse.outputs.response }}
@@ -152,7 +151,7 @@ jobs:
           result-encoding: string
       - id: blogaSettingsResponse
         name: get bloga settings response
-        if: steps.isFirstCommit.outputs.result == 'false'
+        if: steps.isFirstCommit.outputs.result == 'false' && (secrets.BLOGA_SITE_CONFIG_URL)
         uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
         with:
             url: ${{ secrets.BLOGA_SITE_CONFIG_URL }}
@@ -160,7 +159,7 @@ jobs:
             headers: '{"Content-Type": "application/json"}'
       - id: pathPrefix
         name: get path prefix
-        if: steps.isFirstCommit.outputs.result == 'false'
+        if: steps.isFirstCommit.outputs.result == 'false' && steps.blogaSettingsResponse.outcome == 'success'
         uses: actions/github-script@v2
         env:
           RESPONSE: ${{ steps.blogaSettingsResponse.outputs.response }}
@@ -175,7 +174,7 @@ jobs:
           result-encoding: string
       - id: templateUrl
         name: get template url
-        if: steps.isFirstCommit.outputs.result == 'false'
+        if: steps.isFirstCommit.outputs.result == 'false'  && steps.blogaSettingsResponse.outcome == 'success'
         uses: actions/github-script@v2
         env:
           RESPONSE: ${{ steps.blogaSettingsResponse.outputs.response }}
@@ -190,7 +189,7 @@ jobs:
           result-encoding: string
       - id: templateBranch
         name: get template branch
-        if: steps.isFirstCommit.outputs.result == 'false'
+        if: steps.isFirstCommit.outputs.result == 'false'  && steps.blogaSettingsResponse.outcome == 'success'
         uses: actions/github-script@v2
         env:
           RESPONSE: ${{ steps.blogaSettingsResponse.outputs.response }}
@@ -205,7 +204,7 @@ jobs:
           result-encoding: string
       - id: blogaAuth1ClientResponse
         name: get bloga auth1 client response
-        if: steps.isFirstCommit.outputs.result == 'false'
+        if: steps.isFirstCommit.outputs.result == 'false' && steps.blogaAccessToken.outcome == 'success'
         uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
         with:
             url: 'https://api.bloga.owenyoung.com/api/v1/apps/auth1/client'
@@ -213,7 +212,7 @@ jobs:
             headers: '{"Content-Type": "application/json","Authorization":"Bearer ${{ steps.blogaAccessToken.outputs.result }}"}'
       - id: AUTH1_CLIENT_ID
         name: get auth1 client id
-        if: steps.isFirstCommit.outputs.result == 'false'
+        if: steps.isFirstCommit.outputs.result == 'false' && steps.blogaAuth1ClientResponse.outcome == 'success'
         uses: actions/github-script@v2
         env:
           RESPONSE: ${{ steps.blogaAuth1ClientResponse.outputs.response }}
@@ -228,7 +227,7 @@ jobs:
           result-encoding: string
       - id: AUTH1_CLIENT_SECRET
         name: get auth1 client secret
-        if: steps.isFirstCommit.outputs.result == 'false'
+        if: steps.isFirstCommit.outputs.result == 'false' && steps.blogaAuth1ClientResponse.outcome == 'success'
         uses: actions/github-script@v2
         env:
           RESPONSE: ${{ steps.blogaAuth1ClientResponse.outputs.response }}
