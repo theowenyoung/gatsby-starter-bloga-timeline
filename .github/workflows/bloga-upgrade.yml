@@ -150,6 +150,7 @@ jobs:
         if: (env.BLOGA_SITE_CONFIG_URL)
         uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
         with:
+            verbose: true
             url: ${{ env.BLOGA_SITE_CONFIG_URL }}
             method: 'GET'
             headers: '{"Content-Type": "application/json"}'
