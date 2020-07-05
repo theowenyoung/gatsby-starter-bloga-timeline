@@ -28,6 +28,7 @@ jobs:
       templateBranch: ${{ steps.templateBranch.outputs.result }}
       AUTH1_CLIENT_ID: ${{ steps.AUTH1_CLIENT_ID.outputs.result }}
       AUTH1_CLIENT_SECRET: ${{ steps.AUTH1_CLIENT_SECRET.outputs.result }}
+      isValidForBuild: ${{ steps.isValidForBuild.outputs.result }}
     steps:
       - id: isFirstCommit
         name: Check is first commit
@@ -245,13 +246,26 @@ jobs:
               return ""
             }
           result-encoding: string
+      - id: isValidForBuild
+        name: check if valid for build
+        uses: actions/github-script@v2
+        env:
+          RESPONSE: ${{ steps.blogaAuth1ClientResponse.outputs.response }}
+        with:
+          script: |
+            if(process.env.SSH_DEPLOY_KEY && process.env.BLOGA_SITE_CONFIG_URL && process.env.BLOGA_CLIENT_ID && process.env.BLOGA_CLIENT_SECRET){
+              return true
+            }else{
+              return false
+            }
+          result-encoding: string       
 
 
   build:
     needs: init
     runs-on: ubuntu-latest
     name: Build
-    if:  (needs.init.outputs.isFirstCommit=='false')  && (needs.init.outputs.isSourceBranch=='true')
+    if:  (needs.init.outputs.isFirstCommit=='false')  && (needs.init.outputs.isSourceBranch=='true') && (needs.init.outputs.isValidForBuild == 'true')
     env:
       AUTH1_CLIENT_ID: ${{ needs.init.outputs.AUTH1_CLIENT_ID }}
       AUTH1_CLIENT_SECRET: ${{ needs.init.outputs.AUTH1_CLIENT_SECRET }}
