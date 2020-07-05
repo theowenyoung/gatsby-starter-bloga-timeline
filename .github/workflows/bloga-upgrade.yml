@@ -98,13 +98,11 @@ jobs:
                 core.setFailed('check isDeployBranchExist error: ',e.message)
               }
             })
-
+  
       - id: blogaSiteId
         name: get bloga site id
-        if: (steps.isFirstCommit.outputs.result == 'false') && (secrets.BLOGA_SITE_CONFIG_URL)
+        if: (env.BLOGA_SITE_CONFIG_URL)
         uses: actions/github-script@v2
-        env:
-          BLOGA_SITE_CONFIG_URL: ${{ secrets.BLOGA_SITE_CONFIG_URL }}
         with:
           script: |
             const siteSettingsUrl = process.env.BLOGA_SITE_CONFIG_URL
@@ -118,23 +116,23 @@ jobs:
               }else{
                 core.setFailed('can not detect a valid bloga site config url')
               }
-
+  
             } else {
               core.setFailed('can not detect bloga site config url')
             }
           result-encoding: string          
       - id: blogaAccessTokenResponse
         name: get bloga access token response
-        if: steps.isFirstCommit.outputs.result == 'false' && (secrets.BLOGA_CLIENT_ID) && (secrets.BLOGA_CLIENT_SECRET)
+        if: (env.BLOGA_CLIENT_ID) && (env.BLOGA_CLIENT_SECRET)
         uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
         with:
             url: 'https://auth.owenyoung.com/api/v1/oauth/token'
             method: 'POST'
             headers: '{"Content-Type": "application/json"}'
-            data: '{"client_id": "${{ secrets.BLOGA_CLIENT_ID }}","client_secret": "${{ secrets.BLOGA_CLIENT_SECRET }}","grant_type":"client_credentials"}'
+            data: '{"client_id": "${{ env.BLOGA_CLIENT_ID }}","client_secret": "${{ env.BLOGA_CLIENT_SECRET }}","grant_type":"client_credentials"}'
       - id: blogaAccessToken
         name: get bloga access token
-        if: steps.isFirstCommit.outputs.result == 'false' && (steps.blogaAccessTokenResponse.outcome == 'success')
+        if:  (steps.blogaAccessTokenResponse.outcome == 'success')
         uses: actions/github-script@v2
         env:
           RESPONSE: ${{ steps.blogaAccessTokenResponse.outputs.response }}
@@ -149,15 +147,15 @@ jobs:
           result-encoding: string
       - id: blogaSettingsResponse
         name: get bloga settings response
-        if: steps.isFirstCommit.outputs.result == 'false' && (secrets.BLOGA_SITE_CONFIG_URL)
+        if: (env.BLOGA_SITE_CONFIG_URL)
         uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
         with:
-            url: ${{ secrets.BLOGA_SITE_CONFIG_URL }}
+            url: ${{ env.BLOGA_SITE_CONFIG_URL }}
             method: 'GET'
             headers: '{"Content-Type": "application/json"}'
       - id: pathPrefix
         name: get path prefix
-        if: steps.isFirstCommit.outputs.result == 'false' && steps.blogaSettingsResponse.outcome == 'success'
+        if:  steps.blogaSettingsResponse.outcome == 'success'
         uses: actions/github-script@v2
         env:
           RESPONSE: ${{ steps.blogaSettingsResponse.outputs.response }}
@@ -172,7 +170,7 @@ jobs:
           result-encoding: string
       - id: templateUrl
         name: get template url
-        if: steps.isFirstCommit.outputs.result == 'false'  && steps.blogaSettingsResponse.outcome == 'success'
+        if: steps.blogaSettingsResponse.outcome == 'success'
         uses: actions/github-script@v2
         env:
           RESPONSE: ${{ steps.blogaSettingsResponse.outputs.response }}
@@ -187,7 +185,7 @@ jobs:
           result-encoding: string
       - id: templateBranch
         name: get template branch
-        if: steps.isFirstCommit.outputs.result == 'false'  && steps.blogaSettingsResponse.outcome == 'success'
+        if: steps.blogaSettingsResponse.outcome == 'success'
         uses: actions/github-script@v2
         env:
           RESPONSE: ${{ steps.blogaSettingsResponse.outputs.response }}
@@ -200,6 +198,7 @@ jobs:
               return ""
             }
           result-encoding: string
+
 
   upgrade:
     needs: init
