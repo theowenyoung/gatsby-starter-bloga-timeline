@@ -22,7 +22,7 @@ jobs:
       blogaAccessToken: ${{ steps.blogaAccessToken.outputs.result }}
       blogaSiteId: ${{ steps.blogaSiteId.outputs.result }}
       pathPrefix: ${{ steps.pathPrefix.outputs.result }}
-      templateRepo: ${{ steps.templateRepo.outputs.full_name }}
+      templateUrl: ${{ steps.templateUrl.outputs.result }}
       templateBranch: ${{ steps.templateBranch.outputs.result }}
       forceUpdate: ${{ github.event.client_payload.force }}
     steps:
@@ -33,7 +33,7 @@ jobs:
           COMMIT_MESSAGE: ${{ github.event.commits[0].message }}
           RUN_NUMBER: ${{ github.run_number }}
         with:
-          script: return (process.env.RUN_NUMBER == '1' && process.env.COMMIT_MESSAGE == 'Initial commit') 
+          script: return (process.env.RUN_NUMBER == '1') 
           result-encoding: string
       - id: repositoryName
         name: get repository name
@@ -101,7 +101,7 @@ jobs:
 
       - id: blogaSiteId
         name: get bloga site id
-        if: steps.isFirstCommit.outputs.result == 'false'
+        if: (steps.isFirstCommit.outputs.result == 'false') && (secrets.BLOGA_SITE_CONFIG_URL)
         uses: actions/github-script@v2
         env:
           BLOGA_SITE_CONFIG_URL: ${{ secrets.BLOGA_SITE_CONFIG_URL }}
@@ -125,7 +125,7 @@ jobs:
           result-encoding: string          
       - id: blogaAccessTokenResponse
         name: get bloga access token response
-        if: steps.isFirstCommit.outputs.result == 'false'
+        if: steps.isFirstCommit.outputs.result == 'false' && (secrets.BLOGA_CLIENT_ID) && (secrets.BLOGA_CLIENT_SECRET)
         uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
         with:
             url: 'https://auth.owenyoung.com/api/v1/oauth/token'
@@ -134,7 +134,7 @@ jobs:
             data: '{"client_id": "${{ secrets.BLOGA_CLIENT_ID }}","client_secret": "${{ secrets.BLOGA_CLIENT_SECRET }}","grant_type":"client_credentials"}'
       - id: blogaAccessToken
         name: get bloga access token
-        if: steps.isFirstCommit.outputs.result == 'false'
+        if: steps.isFirstCommit.outputs.result == 'false' && (steps.blogaAccessTokenResponse.outcome == 'success')
         uses: actions/github-script@v2
         env:
           RESPONSE: ${{ steps.blogaAccessTokenResponse.outputs.response }}
@@ -149,7 +149,7 @@ jobs:
           result-encoding: string
       - id: blogaSettingsResponse
         name: get bloga settings response
-        if: steps.isFirstCommit.outputs.result == 'false'
+        if: steps.isFirstCommit.outputs.result == 'false' && (secrets.BLOGA_SITE_CONFIG_URL)
         uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
         with:
             url: ${{ secrets.BLOGA_SITE_CONFIG_URL }}
@@ -157,7 +157,7 @@ jobs:
             headers: '{"Content-Type": "application/json"}'
       - id: pathPrefix
         name: get path prefix
-        if: steps.isFirstCommit.outputs.result == 'false'
+        if: steps.isFirstCommit.outputs.result == 'false' && steps.blogaSettingsResponse.outcome == 'success'
         uses: actions/github-script@v2
         env:
           RESPONSE: ${{ steps.blogaSettingsResponse.outputs.response }}
@@ -172,39 +172,35 @@ jobs:
           result-encoding: string
       - id: templateUrl
         name: get template url
-        if: steps.isFirstCommit.outputs.result == 'false'
+        if: steps.isFirstCommit.outputs.result == 'false'  && steps.blogaSettingsResponse.outcome == 'success'
         uses: actions/github-script@v2
         env:
           RESPONSE: ${{ steps.blogaSettingsResponse.outputs.response }}
         with:
           script: |
             const response = JSON.parse(process.env.RESPONSE)
-            if(response.pathPrefix){
+            if(response.template_url){
               return response.template_url
             }else{
               return ""
             }
           result-encoding: string
-      - id: templateRepo
-        name: get template repo
-        uses: theowenyoung/git-url-parse@v1
-        with:
-          url: ${{ steps.templateUrl.outputs.result}}
       - id: templateBranch
         name: get template branch
-        if: steps.isFirstCommit.outputs.result == 'false'
+        if: steps.isFirstCommit.outputs.result == 'false'  && steps.blogaSettingsResponse.outcome == 'success'
         uses: actions/github-script@v2
         env:
           RESPONSE: ${{ steps.blogaSettingsResponse.outputs.response }}
         with:
           script: |
             const response = JSON.parse(process.env.RESPONSE)
-            if(response.pathPrefix){
+            if(response.template_branch){
               return response.template_branch
             }else{
               return ""
             }
           result-encoding: string
+
   upgrade:
     needs: init
     if: (github.repository != needs.init.outputs.templateRepo)

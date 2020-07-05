@@ -181,7 +181,7 @@ jobs:
         with:
           script: |
             const response = JSON.parse(process.env.RESPONSE)
-            if(response.pathPrefix){
+            if(response.template_url){
               return response.template_url
             }else{
               return ""
@@ -196,7 +196,7 @@ jobs:
         with:
           script: |
             const response = JSON.parse(process.env.RESPONSE)
-            if(response.pathPrefix){
+            if(response.template_branch){
               return response.template_branch
             }else{
               return ""
