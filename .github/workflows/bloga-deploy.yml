@@ -433,12 +433,14 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
             }).then((data)=>{
-              console.log('data',data)
-              if(data.html_url === process.env.VISIT_URL){
-                return false;
+              if(data.status===200 && data.data && data.data.html_url){
+                if(data.data.html_url === process.env.VISIT_URL){
+                  return false
+                }else{
+                  return data.data.html_url
+                }
               }else{
-                console.log('current visit url',data.html_url)
-                return data.html_url
+                return false
               }
             }).catch(e=>{
               core.error(`Get page info error, ${e}`)
