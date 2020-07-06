@@ -433,6 +433,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
             }).then((data)=>{
+              console.log('data',data)
               if(data.html_url === process.env.VISIT_URL){
                 return false;
               }else{
