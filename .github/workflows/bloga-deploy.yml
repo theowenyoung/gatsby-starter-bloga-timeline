@@ -1,4 +1,4 @@
-name: Deploy
+name: Bloga Deploy
 on:
   push:
   repository_dispatch:
@@ -24,6 +24,7 @@ jobs:
       blogaSiteId: ${{ steps.blogaSiteId.outputs.result }}
       pathPrefix: ${{ steps.pathPrefix.outputs.result }}
       cname: ${{ steps.cname.outputs.result }}
+      visitUrl: ${{ steps.visitUrl.outputs.result }}
       templateUrl: ${{ steps.templateUrl.outputs.result }}
       templateRepo: ${{ steps.templateRepo.outputs.full_name }}
       templateBranch: ${{ steps.templateBranch.outputs.result }}
@@ -184,6 +185,21 @@ jobs:
             const response = JSON.parse(process.env.RESPONSE)
             if(response.cname){
               return response.cname
+            }else{
+              return ""
+            }
+          result-encoding: string
+      - id: visitUrl
+        name: get visit url
+        if: steps.blogaSettingsResponse.outcome == 'success'
+        uses: actions/github-script@v2
+        env:
+          RESPONSE: ${{ steps.blogaSettingsResponse.outputs.response }}
+        with:
+          script: |
+            const response = JSON.parse(process.env.RESPONSE)
+            if(response.visit_url){
+              return response.visit_url
             }else{
               return ""
             }
@@ -396,4 +412,42 @@ jobs:
         with:
             url: 'https://api.bloga.owenyoung.com/api/v1/sites/${{ needs.init.outputs.blogaSiteId }}/github-pages'
             method: 'POST'
-            headers: '{"Content-Type": "application/json","Authorization":"Bearer ${{ needs.init.outputs.blogaAccessToken }}"}'      
+            headers: '{"Content-Type": "application/json","Authorization":"Bearer ${{ needs.init.outputs.blogaAccessToken }}"}'
+  post-build:
+    needs: 
+      - init
+      - build
+    runs-on: ubuntu-latest
+    name: Post Build
+    steps:
+      - name: Check if Pages Visit URl changed
+        id: isVisitUrlChanged
+        uses: actions/github-script@v2
+        env:
+          VISIT_URL: ${{ needs.init.outputs.visitUrl }}
+        with:
+          result-encoding: string
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            return github.repos.getPages({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            }).then((data)=>{
+              if(data.html_url === process.env.VISIT_URL){
+                return false;
+              }else{
+                console.log('current visit url',data.html_url)
+                return data.html_url
+              }
+            }).catch(e=>{
+              core.error(`Get page info error, ${e}`)
+              return false;
+            })
+      - name: Change visit url
+        if: steps.isVisitUrlChanged.outputs.result != 'false' && needs.init.outputs.blogaAccessToken
+        uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
+        with:
+            url: 'https://api.bloga.owenyoung.com/api/v1/sites/${{ needs.init.outputs.blogaSiteId }}'
+            method: 'PATCH'
+            headers: '{"Content-Type": "application/json","Authorization":"Bearer ${{ needs.init.outputs.blogaAccessToken }}"}'
+            data: '{"visit_url":"${{steps.isVisitUrlChanged.outputs.result}}"}'
