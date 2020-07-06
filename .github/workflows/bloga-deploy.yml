@@ -23,6 +23,7 @@ jobs:
       blogaAccessToken: ${{ steps.blogaAccessToken.outputs.result }}
       blogaSiteId: ${{ steps.blogaSiteId.outputs.result }}
       pathPrefix: ${{ steps.pathPrefix.outputs.result }}
+      cname: ${{ steps.cname.outputs.result }}
       templateUrl: ${{ steps.templateUrl.outputs.result }}
       templateRepo: ${{ steps.templateRepo.outputs.full_name }}
       templateBranch: ${{ steps.templateBranch.outputs.result }}
@@ -168,6 +169,21 @@ jobs:
             const response = JSON.parse(process.env.RESPONSE)
             if(response.pathPrefix){
               return response.pathPrefix
+            }else{
+              return ""
+            }
+          result-encoding: string
+      - id: cname
+        name: get cname
+        if: steps.blogaSettingsResponse.outcome == 'success'
+        uses: actions/github-script@v2
+        env:
+          RESPONSE: ${{ steps.blogaSettingsResponse.outputs.response }}
+        with:
+          script: |
+            const response = JSON.parse(process.env.RESPONSE)
+            if(response.cname){
+              return response.cname
             }else{
               return ""
             }
@@ -350,6 +366,7 @@ jobs:
           publish_branch: ${{ needs.init.outputs.deployBranch }}
           user_name: "github-actions[bot]"
           user_email: "github-actions[bot]@users.noreply.github.com"
+          cname: ${{ needs.init.outputs.cname }}
       - name: Check is need trigger the site build
         id: isNeedTriggerSiteBuild
         uses: actions/github-script@v2
