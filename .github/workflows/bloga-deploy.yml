@@ -366,6 +366,7 @@ jobs:
           publish_branch: ${{ needs.init.outputs.deployBranch }}
           user_name: "github-actions[bot]"
           user_email: "github-actions[bot]@users.noreply.github.com"
+          cname: ${{ needs.init.outputs.cname }}
       - name: Check is need trigger the site build
         id: isNeedTriggerSiteBuild
         uses: actions/github-script@v2
