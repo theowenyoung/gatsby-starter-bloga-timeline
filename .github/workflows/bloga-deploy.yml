@@ -236,6 +236,7 @@ jobs:
       - id: blogaAuth1ClientResponse
         name: get bloga auth1 client response
         if: steps.blogaAccessToken.outcome == 'success'
+        continue-on-error: true
         uses: CamiloGarciaLaRotta/watermelon-http-client@v1.4
         with:
             url: 'https://api.bloga.owenyoung.com/api/v1/apps/auth1/client'
