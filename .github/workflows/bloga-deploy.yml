@@ -25,7 +25,6 @@ jobs:
       pathPrefix: ${{ steps.pathPrefix.outputs.result }}
       cname: ${{ steps.cname.outputs.result }}
       visitUrl: ${{ steps.visitUrl.outputs.result }}
-      templateUrl: ${{ steps.templateUrl.outputs.result }}
       templateRepo: ${{ steps.templateRepo.outputs.full_name }}
       templateBranch: ${{ steps.templateBranch.outputs.result }}
       AUTH1_CLIENT_ID: ${{ steps.AUTH1_CLIENT_ID.outputs.result }}
@@ -204,8 +203,8 @@ jobs:
               return ""
             }
           result-encoding: string
-      - id: templateUrl
-        name: get template url
+      - id: templateRepo
+        name: get template repo
         if: steps.blogaSettingsResponse.outcome == 'success'
         uses: actions/github-script@v2
         env:
@@ -213,18 +212,12 @@ jobs:
         with:
           script: |
             const response = JSON.parse(process.env.RESPONSE)
-            if(response.template_url){
-              return response.template_url
+            if(response.template_repo){
+              return response.template_repo
             }else{
               return ""
             }
           result-encoding: string
-      - id: templateRepo
-        name: get template repo
-        if: steps.templateUrl.outcome == 'success'
-        uses: theowenyoung/git-url-parse@v1
-        with:
-          url: ${{ steps.templateUrl.outputs.result}}
       - id: templateBranch
         name: get template branch
         if: steps.blogaSettingsResponse.outcome == 'success'
