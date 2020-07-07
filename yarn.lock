@@ -4974,10 +4974,10 @@ bloga-core@^0.0.4:
     debug "^4.1.1"
     fs-extra "^9.0.1"
 
-bloga-gatsby@^0.0.13:
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/bloga-gatsby/-/bloga-gatsby-0.0.13.tgz#d450e4dcbf5f219997e949d3c3906ca77a3e2410"
-  integrity sha512-s02sjd4jh4EHKc1bwRIZ7ZPRywKWkMon1RlYiwn7e2rlWPlvKLqDadE0cEEnwqdnkPYf2Nxhr++0hQZCFR+Rmg==
+bloga-gatsby@^0.0.15:
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/bloga-gatsby/-/bloga-gatsby-0.0.15.tgz#0784cef613628009758b335f598ee0c2cdf7817f"
+  integrity sha512-wsAlxerQkwxWKdq7T9OpH+cY3VPTBbxb1JH96eDk7zi0xwXVhPYuxievIgRZ8ssrh5HmZTWux4SvUx4bvjFG6w==
   dependencies:
     "@oclif/command" "^1.7.0"
     "@oclif/config" "^1"
