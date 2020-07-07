@@ -25,7 +25,7 @@ jobs:
       pathPrefix: ${{ steps.pathPrefix.outputs.result }}
       cname: ${{ steps.cname.outputs.result }}
       visitUrl: ${{ steps.visitUrl.outputs.result }}
-      templateRepo: ${{ steps.templateRepo.outputs.full_name }}
+      templateRepo: ${{ steps.templateRepo.outputs.result }}
       templateBranch: ${{ steps.templateBranch.outputs.result }}
       AUTH1_CLIENT_ID: ${{ steps.AUTH1_CLIENT_ID.outputs.result }}
       AUTH1_CLIENT_SECRET: ${{ steps.AUTH1_CLIENT_SECRET.outputs.result }}
