@@ -313,9 +313,6 @@ jobs:
         run: echo $INIT_OUTPUTS 
         env:
           INIT_OUTPUTS: ${{ toJson(needs.init.outputs) }}
-      - name: check param
-        if: (!env.SSH_DEPLOY_KEY)
-        run: exit 1
       - name: checkout repo
         uses: actions/checkout@v2
         with:
