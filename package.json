@@ -66,8 +66,6 @@
     "gatsby-remark-relative-images": "^0.3.0",
     "gatsby-remark-responsive-iframe": "^2.3.1",
     "gatsby-source-filesystem": "^2.2.2",
-    "gatsby-source-git": "^1.0.2",
-    "gatsby-source-twitter": "^3.2.1",
     "gatsby-transformer-remark": "^2.7.1",
     "gatsby-transformer-sharp": "^2.4.3",
     "git-url-parse": "^11.1.2",
