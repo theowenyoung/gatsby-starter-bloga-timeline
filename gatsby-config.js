@@ -5,6 +5,6 @@ require("dotenv").config()
 const {Config} = require('bloga-gatsby')
 
 const gatsbyConfig = new Config('./_gatsby.config').toConfig()
-// console.log('finalConfig', JSON.stringify(gatsbyConfig, null, 2))
+console.log('finalConfig', JSON.stringify(gatsbyConfig, null, 2))
 
 module.exports = gatsbyConfig
