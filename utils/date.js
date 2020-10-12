@@ -1,6 +1,7 @@
 const gitP = require('simple-git/promise');
 const path = require('path')
 const moment = require('moment')
+
 exports.getFileLastCommitDate = function (filePath) {
   const git = gitP(path.dirname(filePath))
   return git.log({
