@@ -75,7 +75,7 @@
     "lodash": "^4.17.15",
     "lodash.kebabcase": "^4.1.1",
     "lowdb": "^1.0.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "netlify-cms-app": "^2.12.3",
     "node-fetch": "^2.6.0",
     "normalize.css": "^8.0.1",
